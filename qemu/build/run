@@ -1,0 +1,4 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+exec /home/vboxuser/qemu/build/pyvenv/bin/meson devenv -C /home/vboxuser/qemu/build -w "$PWD" "$@"

@@ -1,0 +1,1 @@
+UART self-test: started

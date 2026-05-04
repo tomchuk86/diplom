@@ -1,0 +1,42 @@
+Machine: uartarm-soc
+UART base address: 0x10014000
+UART region size: 0x1000
+
+Compatible UART model:
+UART 16550A compatible (basic register model)
+
+Standard registers:
+0x00 : RBR / THR / DLL
+0x01 : IER / DLM
+0x02 : IIR / FCR
+0x03 : LCR
+0x04 : MCR
+0x05 : LSR
+0x06 : MSR
+0x07 : SCR
+
+Extension registers:
+0x20 : TX_COUNT
+0x24 : RX_COUNT
+0x28 : ERR_COUNT
+0x2C : IRQ_COUNT
+
+Current implemented behavior:
+- DLAB switching through LCR[7]
+- DLL / DLM access
+- THR write
+- RBR read
+- IER read/write
+- FCR write (basic reset behavior)
+- LCR read/write
+- MCR read/write
+- LSR read
+- MSR read
+- SCR read/write
+- TX_COUNT / RX_COUNT / ERR_COUNT / IRQ_COUNT read/write
+
+Current limitations:
+- FIFO behavior is simplified
+- Interrupt generation is simplified
+- Timing is not modeled
+- RX path is test-driven, not from external serial line
