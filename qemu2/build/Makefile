@@ -1,1 +1,1 @@
-/home/vboxuser/qemu/Makefile
+/home/vboxuser/diplom/qemu2/Makefile

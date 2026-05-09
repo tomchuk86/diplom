@@ -10,7 +10,7 @@
 #define UARTARM_RAM_BASE   0x80000000ULL
 #define UARTARM_RAM_SIZE   (128 * 1024 * 1024ULL)
 
-#define UARTARM_UART_BASE  0x10013000ULL
+#define UARTARM_UART_BASE  0xff210000ULL
 #define UARTARM_UART_SIZE  0x1000
 
 static MemoryRegion uartarm_ram;

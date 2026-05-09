@@ -14,8 +14,8 @@
 | `tests/rtl/uart_16550/` | ModelSim-тестбенч и `*.do`-скрипты |
 | `hw/char/uart_stub.c` | QEMU MMIO-модель UART 16550A / точка подключения co-sim |
 | `hw/char/uart_cosim_socket.c` | TCP-клиент для bridge на `127.0.0.1:1234` |
-| `hw/arm/uartarm_soc.c` | Минимальная машина `uartarm-soc` с UART по адресу `0x10013000` |
-| `hw/arm/vexpress.c` | Рабочая Buildroot-платформа `vexpress-a9`; UART добавлен по адресу `0x10014000` |
+| `hw/arm/uartarm_soc.c` | Минимальная машина `uartarm-soc` с UART по адресу `0xff210000` |
+| `hw/arm/vexpress.c` | Рабочая Buildroot-платформа `vexpress-a9`; UART добавлен по адресу `0xff210000`, как на DE1-SoC через lightweight bridge |
 
 ## Состав исходного RTL-проекта
 
@@ -55,7 +55,7 @@
 
 ## Быстрый старт (ModelSim GUI)
 
-1. `cd /home/vboxuser/qemu/tests/rtl/uart_16550` (в Transcript или через меню).
+1. `cd /home/vboxuser/diplom/qemu2/tests/rtl/uart_16550` (в Transcript или через меню).
 2. `do compile.do`
 3. `do run.do`
 4. **View → Wave** — сигналы подставляются из `wave_add.do`.

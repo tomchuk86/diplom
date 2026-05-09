@@ -12,13 +12,13 @@ OBJECT_DECLARE_SIMPLE_TYPE(UARTStubState, UART_STUB)
  * UART 16550A register map
  * ========================= */
 #define UART_REG_RBR_THR_DLL  0x00
-#define UART_REG_IER_DLM      0x01
-#define UART_REG_IIR_FCR      0x02
-#define UART_REG_LCR          0x03
-#define UART_REG_MCR          0x04
-#define UART_REG_LSR          0x05
-#define UART_REG_MSR          0x06
-#define UART_REG_SCR          0x07
+#define UART_REG_IER_DLM      0x04
+#define UART_REG_IIR_FCR      0x08
+#define UART_REG_LCR          0x0C
+#define UART_REG_MCR          0x10
+#define UART_REG_LSR          0x14
+#define UART_REG_MSR          0x18
+#define UART_REG_SCR          0x1C
 
 /* Custom diagnostic/statistic registers */
 #define UART_REG_TX_COUNT     0x20
@@ -37,6 +37,7 @@ OBJECT_DECLARE_SIMPLE_TYPE(UARTStubState, UART_STUB)
 
 #define UART_IER_RDA          0x01
 #define UART_IER_THRE         0x02
+#define UART_MCR_LOOPBACK     0x10
 
 #define UART_IIR_NO_INT       0x01
 #define UART_IIR_THRE_SRC     0x02
@@ -45,7 +46,7 @@ OBJECT_DECLARE_SIMPLE_TYPE(UARTStubState, UART_STUB)
 /* =========================
  * Build-time switches
  * ========================= */
-#define UART_STUB_SELFTEST    1
+#define UART_STUB_SELFTEST    0
 #define UART_STUB_COSIM       1
 
 #define UART_FIFO_SIZE        16
@@ -213,6 +214,10 @@ static void uart_push_tx(UARTStubState *s, uint8_t value)
 
     printf("UART16550: write THR = 0x%02x ('%c'), TX FIFO count=%u\n",
            value, (char)value, s->tx_count_fifo);
+
+    if (s->mcr & UART_MCR_LOOPBACK) {
+        uart_push_rx(s, value);
+    }
 }
 
 /*
@@ -403,19 +408,11 @@ static void uart_local_write(UARTStubState *s, hwaddr addr, uint64_t value, unsi
 
 #if UART_STUB_COSIM
 /*
- * QEMU MMIO side uses canonical 16550 byte offsets 0x00..0x07 for
- * register accesses (as many software stacks do for port-style UARTs).
- * Our APB RTL wrapper decodes reg index from paddr[4:2], so the bridge
- * expects APB byte addresses 0x00,0x04,...,0x1C for regs 0..7.
- *
- * Translate only legacy 16550 registers. Keep extended diagnostics
- * offsets (0x20+) unchanged.
+ * QEMU MMIO uses the same board/RTL map as the DE1-SoC Platform Designer
+ * system: 16550 register index N is exposed at byte offset N * 4.
  */
 static uint32_t uart_cosim_translate_addr(hwaddr addr)
 {
-    if (addr <= UART_REG_SCR) {
-        return (uint32_t)(addr << 2);
-    }
     return (uint32_t)addr;
 }
 
@@ -499,7 +496,9 @@ static const MemoryRegionOps uart_stub_ops = {
 static void uart_stub_init(Object *obj)
 {
     UARTStubState *s = UART_STUB(obj);
+#if UART_STUB_SELFTEST
     uint64_t val;
+#endif
 
     /* Reset state */
     s->ier = 0x00;
@@ -535,7 +534,12 @@ static void uart_stub_init(Object *obj)
 
     printf("uart_stub_init called\n");
 #if UART_STUB_COSIM
-    s->cosim_connected = (cosim_uart_init() == 0);
+    if (g_strcmp0(g_getenv("UART16550_COSIM"), "1") == 0) {
+        s->cosim_connected = (cosim_uart_init() == 0);
+    } else {
+        s->cosim_connected = false;
+        printf("UART16550 COSIM disabled (set UART16550_COSIM=1 to enable)\n");
+    }
 #else
     s->cosim_connected = false;
 #endif

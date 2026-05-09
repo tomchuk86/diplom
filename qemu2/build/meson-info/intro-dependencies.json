@@ -183,6 +183,25 @@
     ]
   },
   {
+    "name": "ncursesw",
+    "type": "pkgconfig",
+    "version": "6.5.20250216",
+    "compile_args": [
+      "-D_DEFAULT_SOURCE",
+      "-D_XOPEN_SOURCE=600"
+    ],
+    "link_args": [
+      "-lncursesw",
+      "-ltinfo"
+    ],
+    "include_directories": [],
+    "sources": [],
+    "extra_files": [],
+    "dependencies": [],
+    "depends": [],
+    "meson_variables": []
+  },
+  {
     "name": "gmp",
     "type": "pkgconfig",
     "version": "6.3.0",
@@ -238,25 +257,6 @@
     ]
   },
   {
-    "name": "ncursesw",
-    "type": "pkgconfig",
-    "version": "6.5.20250216",
-    "compile_args": [
-      "-D_DEFAULT_SOURCE",
-      "-D_XOPEN_SOURCE=600"
-    ],
-    "link_args": [
-      "-lncursesw",
-      "-ltinfo"
-    ],
-    "include_directories": [],
-    "sources": [],
-    "extra_files": [],
-    "dependencies": [],
-    "depends": [],
-    "meson_variables": []
-  },
-  {
     "name": "m",
     "type": "library",
     "version": "unknown",
@@ -291,7 +291,7 @@
     ]
   },
   {
-    "name": "dep314433762404766914708639330901865473122",
+    "name": "dep192603956549315203105996256345419722184",
     "type": "internal",
     "version": "2.84.1",
     "compile_args": [],
@@ -309,7 +309,7 @@
     ]
   },
   {
-    "name": "dep230820591603660679428069207368401468475",
+    "name": "dep95368108082272217838959596319760394920",
     "type": "internal",
     "version": "2.84.1",
     "compile_args": [],
@@ -327,7 +327,7 @@
     ]
   },
   {
-    "name": "dep261084414945774130847846310397563892116",
+    "name": "dep261629088625438146510649161129948093601",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -342,7 +342,7 @@
     ]
   },
   {
-    "name": "dep6256252770756890763863671440603114976",
+    "name": "dep316220556327922716510693669351666126244",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -351,7 +351,7 @@
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep314433762404766914708639330901865473122"
+      "dep192603956549315203105996256345419722184"
     ],
     "depends": [],
     "meson_variables": [
@@ -359,7 +359,7 @@
     ]
   },
   {
-    "name": "dep115919334571292714411711969072996004270",
+    "name": "dep191610523352103609439349797818025977157",
     "type": "internal",
     "version": "6.5.20250216",
     "compile_args": [
@@ -378,7 +378,7 @@
     ]
   },
   {
-    "name": "dep55363921228782953305014937215987618728",
+    "name": "dep2773457810132358512100056367018943163",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -393,7 +393,7 @@
     ]
   },
   {
-    "name": "dep280710963901381165748262230542330400364",
+    "name": "dep316783554699027692897424570145479413657",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -425,14 +425,14 @@
     ]
   },
   {
-    "name": "dep294159831905300716660671058869993990663",
+    "name": "dep27038291619004228357510548591277889612",
     "type": "internal",
     "version": "undefined",
     "compile_args": [],
     "link_args": [],
     "include_directories": [
-      "/home/vboxuser/qemu/subprojects/libvhost-user/.",
-      "/home/vboxuser/qemu/build/subprojects/libvhost-user/."
+      "/home/vboxuser/diplom/qemu2/subprojects/libvhost-user/.",
+      "/home/vboxuser/diplom/qemu2/build/subprojects/libvhost-user/."
     ],
     "sources": [],
     "extra_files": [],
@@ -447,14 +447,14 @@
     ]
   },
   {
-    "name": "dep180717835998395357623824408950543087279",
+    "name": "dep62685617767974739249992452867435824103",
     "type": "internal",
     "version": "undefined",
     "compile_args": [],
     "link_args": [],
     "include_directories": [
-      "/home/vboxuser/qemu/subprojects/libvduse/.",
-      "/home/vboxuser/qemu/build/subprojects/libvduse/."
+      "/home/vboxuser/diplom/qemu2/subprojects/libvduse/.",
+      "/home/vboxuser/diplom/qemu2/build/subprojects/libvduse/."
     ],
     "sources": [],
     "extra_files": [],
@@ -467,7 +467,7 @@
     ]
   },
   {
-    "name": "dep233383615575364412188873629403588060525",
+    "name": "dep77775532578225234681431754972405186867",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -478,7 +478,7 @@
     ],
     "extra_files": [],
     "dependencies": [
-      "dep230820591603660679428069207368401468475"
+      "dep95368108082272217838959596319760394920"
     ],
     "depends": [],
     "meson_variables": [
@@ -486,7 +486,7 @@
     ]
   },
   {
-    "name": "dep270348561357090957503077263839329259224",
+    "name": "dep55900641054700700338224163584966942530",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -501,7 +501,7 @@
     ]
   },
   {
-    "name": "dep135962172438652913653252362359770112402",
+    "name": "dep30207238409110360060955394111965002855",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -510,7 +510,7 @@
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep270348561357090957503077263839329259224"
+      "dep55900641054700700338224163584966942530"
     ],
     "depends": [],
     "meson_variables": [
@@ -518,7 +518,7 @@
     ]
   },
   {
-    "name": "dep177431696050851883654560699384872876833",
+    "name": "dep107737319213535406240227613309520676599",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -526,7 +526,7 @@
     "include_directories": [],
     "sources": [
       "config-poison.h",
-      "/home/vboxuser/qemu/build/config-host.h",
+      "/home/vboxuser/diplom/qemu2/build/config-host.h",
       "qemu-version.h",
       "qemu-options.def",
       "qemu-img-cmds.h",
@@ -886,7 +886,7 @@
     ],
     "extra_files": [],
     "dependencies": [
-      "dep135962172438652913653252362359770112402"
+      "dep30207238409110360060955394111965002855"
     ],
     "depends": [
       "qemuutil@sta"
@@ -896,19 +896,19 @@
     ]
   },
   {
-    "name": "dep294722856637671481821502606716715751171",
+    "name": "dep137128543111824544180476934356206063042",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
     "link_args": [],
     "include_directories": [
-      "/home/vboxuser/qemu/plugins/../include/plugins",
-      "/home/vboxuser/qemu/build/plugins/../include/plugins"
+      "/home/vboxuser/diplom/qemu2/plugins/../include/plugins",
+      "/home/vboxuser/diplom/qemu2/build/plugins/../include/plugins"
     ],
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep314433762404766914708639330901865473122"
+      "dep192603956549315203105996256345419722184"
     ],
     "depends": [],
     "meson_variables": [
@@ -916,7 +916,7 @@
     ]
   },
   {
-    "name": "dep153535365770261776006806617444580823714",
+    "name": "dep284527702764391648777239421337885180589",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -931,7 +931,7 @@
     ]
   },
   {
-    "name": "dep169223314362734462105465691759614454374",
+    "name": "dep4012226499314295080282488733871414196",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -940,7 +940,7 @@
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep270348561357090957503077263839329259224"
+      "dep55900641054700700338224163584966942530"
     ],
     "depends": [],
     "meson_variables": [
@@ -948,7 +948,7 @@
     ]
   },
   {
-    "name": "dep91413271179053246249830843338770750716",
+    "name": "dep283631620073052649412685780081049268851",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -957,8 +957,8 @@
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep169223314362734462105465691759614454374",
-      "dep270348561357090957503077263839329259224"
+      "dep4012226499314295080282488733871414196",
+      "dep55900641054700700338224163584966942530"
     ],
     "depends": [],
     "meson_variables": [
@@ -966,7 +966,7 @@
     ]
   },
   {
-    "name": "dep119389778504659203316241833204012122187",
+    "name": "dep229561162586030973989613498586260637548",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -975,8 +975,8 @@
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep91413271179053246249830843338770750716",
-      "dep270348561357090957503077263839329259224"
+      "dep283631620073052649412685780081049268851",
+      "dep55900641054700700338224163584966942530"
     ],
     "depends": [],
     "meson_variables": [
@@ -984,7 +984,7 @@
     ]
   },
   {
-    "name": "dep62498215841234030368958957043960042907",
+    "name": "dep192781637115136685097826323103131803015",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -993,8 +993,8 @@
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep270348561357090957503077263839329259224",
-      "dep119389778504659203316241833204012122187"
+      "dep55900641054700700338224163584966942530",
+      "dep229561162586030973989613498586260637548"
     ],
     "depends": [],
     "meson_variables": [
@@ -1002,7 +1002,7 @@
     ]
   },
   {
-    "name": "dep114492341079025284887285056691343331112",
+    "name": "dep204817985447764896501772454832729783587",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -1013,8 +1013,8 @@
     "dependencies": [
       "libzstd",
       "zlib",
-      "dep91413271179053246249830843338770750716",
-      "dep119389778504659203316241833204012122187"
+      "dep283631620073052649412685780081049268851",
+      "dep229561162586030973989613498586260637548"
     ],
     "depends": [],
     "meson_variables": [
@@ -1022,7 +1022,7 @@
     ]
   },
   {
-    "name": "dep40713927222911440855419015714822877921",
+    "name": "dep42346599171869172062414562624321724135",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -1031,9 +1031,9 @@
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep180717835998395357623824408950543087279",
-      "dep114492341079025284887285056691343331112",
-      "dep135962172438652913653252362359770112402"
+      "dep62685617767974739249992452867435824103",
+      "dep204817985447764896501772454832729783587",
+      "dep30207238409110360060955394111965002855"
     ],
     "depends": [],
     "meson_variables": [
@@ -1041,7 +1041,7 @@
     ]
   },
   {
-    "name": "dep278340118529196723175900127742128902403",
+    "name": "dep322742244023577121038854705161316314948",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -1056,7 +1056,7 @@
     ]
   },
   {
-    "name": "dep129956802798894176889488699921802359340",
+    "name": "dep22453213592132712528587190144882504092",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -1066,7 +1066,7 @@
     "extra_files": [],
     "dependencies": [
       "util",
-      "dep119389778504659203316241833204012122187"
+      "dep229561162586030973989613498586260637548"
     ],
     "depends": [],
     "meson_variables": [
@@ -1074,7 +1074,7 @@
     ]
   },
   {
-    "name": "dep221929306264693079091984454606079328916",
+    "name": "dep53213769968358003806282756186175817532",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -1089,7 +1089,7 @@
     ]
   },
   {
-    "name": "dep85340233697209484829949138374142449318",
+    "name": "dep171822488622316333401018146484170917025",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -1098,11 +1098,11 @@
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep55363921228782953305014937215987618728",
-      "dep230820591603660679428069207368401468475",
+      "dep2773457810132358512100056367018943163",
+      "dep95368108082272217838959596319760394920",
       "pixman-1",
-      "dep233383615575364412188873629403588060525",
-      "dep270348561357090957503077263839329259224"
+      "dep77775532578225234681431754972405186867",
+      "dep55900641054700700338224163584966942530"
     ],
     "depends": [],
     "meson_variables": [
@@ -1110,7 +1110,7 @@
     ]
   },
   {
-    "name": "dep8523350441633177969765524633183175230",
+    "name": "dep306360141252462847575678983567750429728",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
@@ -1118,7 +1118,7 @@
     "include_directories": [],
     "sources": [
       "config-poison.h",
-      "/home/vboxuser/qemu/build/config-host.h",
+      "/home/vboxuser/diplom/qemu2/build/config-host.h",
       "qemu-version.h",
       "qemu-options.def",
       "qemu-img-cmds.h",
@@ -1504,7 +1504,7 @@
     ]
   },
   {
-    "name": "dep118298635973637746123454201217190875064",
+    "name": "dep219146797609031756646251127260510518170",
     "type": "internal",
     "version": "undefined",
     "compile_args": [
@@ -1516,12 +1516,12 @@
     ],
     "link_args": [],
     "include_directories": [
-      "/home/vboxuser/qemu/subprojects/berkeley-softfloat-3/.",
-      "/home/vboxuser/qemu/build/subprojects/berkeley-softfloat-3/.",
-      "/home/vboxuser/qemu/subprojects/berkeley-softfloat-3/source/include",
-      "/home/vboxuser/qemu/build/subprojects/berkeley-softfloat-3/source/include",
-      "/home/vboxuser/qemu/subprojects/berkeley-softfloat-3/source/8086-SSE",
-      "/home/vboxuser/qemu/build/subprojects/berkeley-softfloat-3/source/8086-SSE"
+      "/home/vboxuser/diplom/qemu2/subprojects/berkeley-softfloat-3/.",
+      "/home/vboxuser/diplom/qemu2/build/subprojects/berkeley-softfloat-3/.",
+      "/home/vboxuser/diplom/qemu2/subprojects/berkeley-softfloat-3/source/include",
+      "/home/vboxuser/diplom/qemu2/build/subprojects/berkeley-softfloat-3/source/include",
+      "/home/vboxuser/diplom/qemu2/subprojects/berkeley-softfloat-3/source/8086-SSE",
+      "/home/vboxuser/diplom/qemu2/build/subprojects/berkeley-softfloat-3/source/8086-SSE"
     ],
     "sources": [],
     "extra_files": [],
@@ -1534,7 +1534,7 @@
     ]
   },
   {
-    "name": "dep243099774159916334269641357103425750964",
+    "name": "dep193901421847007002535067693778948089836",
     "type": "internal",
     "version": "undefined",
     "compile_args": [
@@ -1547,15 +1547,15 @@
     ],
     "link_args": [],
     "include_directories": [
-      "/home/vboxuser/qemu/subprojects/berkeley-testfloat-3/.",
-      "/home/vboxuser/qemu/build/subprojects/berkeley-testfloat-3/.",
-      "/home/vboxuser/qemu/subprojects/berkeley-testfloat-3/source",
-      "/home/vboxuser/qemu/build/subprojects/berkeley-testfloat-3/source"
+      "/home/vboxuser/diplom/qemu2/subprojects/berkeley-testfloat-3/.",
+      "/home/vboxuser/diplom/qemu2/build/subprojects/berkeley-testfloat-3/.",
+      "/home/vboxuser/diplom/qemu2/subprojects/berkeley-testfloat-3/source",
+      "/home/vboxuser/diplom/qemu2/build/subprojects/berkeley-testfloat-3/source"
     ],
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep118298635973637746123454201217190875064"
+      "dep219146797609031756646251127260510518170"
     ],
     "depends": [
       "91e3eaf@@testfloat@sta"
@@ -1565,7 +1565,7 @@
     ]
   },
   {
-    "name": "dep44496000710744130302720383236201913115",
+    "name": "dep85541586548478541314617102345492083645",
     "type": "internal",
     "version": "undefined",
     "compile_args": [
@@ -1578,15 +1578,15 @@
     ],
     "link_args": [],
     "include_directories": [
-      "/home/vboxuser/qemu/subprojects/berkeley-testfloat-3/.",
-      "/home/vboxuser/qemu/build/subprojects/berkeley-testfloat-3/.",
-      "/home/vboxuser/qemu/subprojects/berkeley-testfloat-3/source",
-      "/home/vboxuser/qemu/build/subprojects/berkeley-testfloat-3/source"
+      "/home/vboxuser/diplom/qemu2/subprojects/berkeley-testfloat-3/.",
+      "/home/vboxuser/diplom/qemu2/build/subprojects/berkeley-testfloat-3/.",
+      "/home/vboxuser/diplom/qemu2/subprojects/berkeley-testfloat-3/source",
+      "/home/vboxuser/diplom/qemu2/build/subprojects/berkeley-testfloat-3/source"
     ],
     "sources": [],
     "extra_files": [],
     "dependencies": [
-      "dep118298635973637746123454201217190875064"
+      "dep219146797609031756646251127260510518170"
     ],
     "depends": [
       "91e3eaf@@slowfloat@sta"
@@ -1596,18 +1596,18 @@
     ]
   },
   {
-    "name": "dep59689705368240921482398518594396436256",
+    "name": "dep116348239483573027756435377213728065285",
     "type": "internal",
     "version": "10.2.90",
     "compile_args": [],
     "link_args": [],
     "include_directories": [],
     "sources": [
-      "/home/vboxuser/qemu/tests/unit/iothread.c"
+      "/home/vboxuser/diplom/qemu2/tests/unit/iothread.c"
     ],
     "extra_files": [],
     "dependencies": [
-      "dep114492341079025284887285056691343331112"
+      "dep204817985447764896501772454832729783587"
     ],
     "depends": [],
     "meson_variables": [

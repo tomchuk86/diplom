@@ -1,19 +1,22 @@
-Machine: uartarm-soc
-UART base address: 0x10014000
+Machine: vexpress-a9 / uartarm-soc
+UART base address: 0xff210000
 UART region size: 0x1000
 
 Compatible UART model:
 UART 16550A compatible (basic register model)
 
+Board-compatible mapping:
+0xff210000 = 0xff200000 lightweight HPS-to-FPGA bridge + 0x00010000 UART IP
+
 Standard registers:
 0x00 : RBR / THR / DLL
-0x01 : IER / DLM
-0x02 : IIR / FCR
-0x03 : LCR
-0x04 : MCR
-0x05 : LSR
-0x06 : MSR
-0x07 : SCR
+0x04 : IER / DLM
+0x08 : IIR / FCR
+0x0C : LCR
+0x10 : MCR
+0x14 : LSR
+0x18 : MSR
+0x1C : SCR
 
 Extension registers:
 0x20 : TX_COUNT

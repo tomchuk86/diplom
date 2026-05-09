@@ -13,11 +13,14 @@
 #define DRV_NAME "uart16550_demo"
 
 /* MMIO */
-static unsigned long base_addr = 0x10013000;
+static unsigned long base_addr = 0xff210000;
 module_param(base_addr, ulong, 0644);
 
 static unsigned long region_size = 0x1000;
 module_param(region_size, ulong, 0644);
+
+static bool loopback = true;
+module_param(loopback, bool, 0644);
 
 /* Registers */
 /*
@@ -68,6 +71,7 @@ static struct dev_tiny dev;
 static inline u8 r8(u32 off){ return readb(dev.base + off); }
 static inline void w8(u32 off, u8 v){ writeb(v, dev.base + off); }
 static inline u32 r32(u32 off){ return readl(dev.base + off); }
+static inline void w32(u32 off, u32 v){ writel(v, dev.base + off); }
 
 static int wait_thr(void){
     int i;
@@ -82,9 +86,15 @@ static void init_uart(void){
     w8(UART_LCR, 0x03);
     w8(UART_FCR, 0x07);
     w8(UART_LCR, 0x83);
-    w8(UART_DLL, 1);
+    w8(UART_DLL, 27);
     w8(UART_DLM, 0);
     w8(UART_LCR, 0x03);
+    w8(UART_MCR, loopback ? 0x10 : 0x00);
+    w8(UART_FCR, 0x07);
+    w32(UART_TX_COUNT, 0);
+    w32(UART_RX_COUNT, 0);
+    w32(UART_ERR_COUNT, 0);
+    w32(UART_IRQ_COUNT, 0);
 }
 
 static ssize_t my_write(struct file *f, const char __user *buf, size_t len, loff_t *o){

@@ -1,2 +1,2 @@
-/home/vboxuser/qemu/build/meson-private/cmake_SDL2/CMakeFiles/edit_cache.dir
-/home/vboxuser/qemu/build/meson-private/cmake_SDL2/CMakeFiles/rebuild_cache.dir
+/home/vboxuser/diplom/qemu2/build/meson-private/cmake_SDL2/CMakeFiles/edit_cache.dir
+/home/vboxuser/diplom/qemu2/build/meson-private/cmake_SDL2/CMakeFiles/rebuild_cache.dir

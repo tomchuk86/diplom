@@ -17,7 +17,8 @@ module apb_uart_16550 #(
   // Word index: 0..7  => registers @ 0x00..0x1C; 8..11 => demo ext @ 0x20..0x2C
   wire [5:0] widx  = paddr[7:2];
   wire        core  = widx < 6'd8;
-  wire  we  = psel & penable & pwrite  & pstrb[0] & core;
+  wire        ext   = (widx >= 6'd8) & (widx <= 6'd11);
+  wire  we  = psel & penable & pwrite  & pstrb[0] & (core | ext);
   wire  re  = psel & penable & ~pwrite  & core;
   wire [2:0] adr  = widx[2:0];
   wire [7:0] rd;

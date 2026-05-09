@@ -41,63 +41,63 @@ static bool trans_VLDST_single(DisasContext *ctx, arg_VLDST_single *a);
 
 static void disas_neon_ls_extract_disas_neon_ls_Fmt_0(DisasContext *ctx, arg_disas_neon_ls0 *a, uint32_t insn)
 {
-    a->itype = extract32(insn, 8, 4);
     a->l = extract32(insn, 21, 1);
+    a->size = extract32(insn, 6, 2);
     a->rm = extract32(insn, 0, 4);
     a->rn = extract32(insn, 16, 4);
-    a->size = extract32(insn, 6, 2);
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->align = extract32(insn, 4, 2);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->itype = extract32(insn, 8, 4);
 }
 
 static void disas_neon_ls_extract_disas_neon_ls_Fmt_1(DisasContext *ctx, arg_disas_neon_ls1 *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 0, 4);
+    a->size = extract32(insn, 6, 2);
     a->rn = extract32(insn, 16, 4);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->a = extract32(insn, 4, 1);
     a->t = extract32(insn, 5, 1);
     a->n = extract32(insn, 8, 2);
-    a->a = extract32(insn, 4, 1);
-    a->size = extract32(insn, 6, 2);
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->rm = extract32(insn, 0, 4);
 }
 
 static void disas_neon_ls_extract_disas_neon_ls_Fmt_2(DisasContext *ctx, arg_disas_neon_ls2 *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 0, 4);
     a->l = extract32(insn, 21, 1);
+    a->size = 0;
+    a->rn = extract32(insn, 16, 4);
+    a->align = extract32(insn, 4, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->n = extract32(insn, 8, 2);
     a->stride = 1;
     a->reg_idx = extract32(insn, 5, 3);
-    a->rn = extract32(insn, 16, 4);
-    a->n = extract32(insn, 8, 2);
-    a->size = 0;
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
-    a->align = extract32(insn, 4, 1);
+    a->rm = extract32(insn, 0, 4);
 }
 
 static void disas_neon_ls_extract_disas_neon_ls_Fmt_3(DisasContext *ctx, arg_disas_neon_ls2 *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 0, 4);
     a->l = extract32(insn, 21, 1);
+    a->size = 1;
+    a->rn = extract32(insn, 16, 4);
+    a->align = extract32(insn, 4, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->n = extract32(insn, 8, 2);
     a->stride = plus_1(ctx, extract32(insn, 5, 1));
     a->reg_idx = extract32(insn, 6, 2);
-    a->rn = extract32(insn, 16, 4);
-    a->n = extract32(insn, 8, 2);
-    a->size = 1;
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
-    a->align = extract32(insn, 4, 1);
+    a->rm = extract32(insn, 0, 4);
 }
 
 static void disas_neon_ls_extract_disas_neon_ls_Fmt_4(DisasContext *ctx, arg_disas_neon_ls2 *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 0, 4);
     a->l = extract32(insn, 21, 1);
+    a->size = 2;
+    a->rn = extract32(insn, 16, 4);
+    a->align = extract32(insn, 4, 2);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->n = extract32(insn, 8, 2);
     a->stride = plus_1(ctx, extract32(insn, 6, 1));
     a->reg_idx = extract32(insn, 7, 1);
-    a->rn = extract32(insn, 16, 4);
-    a->n = extract32(insn, 8, 2);
-    a->size = 2;
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
-    a->align = extract32(insn, 4, 2);
+    a->rm = extract32(insn, 0, 4);
 }
 
 bool disas_neon_ls(DisasContext *ctx, uint32_t insn)

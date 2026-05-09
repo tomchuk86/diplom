@@ -714,7 +714,7 @@ static void vexpress_common_init(MachineState *machine)
     }
     DeviceState *uart_dev = qdev_new("uart-stub");
     sysbus_realize_and_unref(SYS_BUS_DEVICE(uart_dev), &error_fatal);
-    sysbus_mmio_map(SYS_BUS_DEVICE(uart_dev), 0, 0x10014000);
+    sysbus_mmio_map(SYS_BUS_DEVICE(uart_dev), 0, 0xff210000);
     daughterboard->bootinfo.ram_size = machine->ram_size;
     daughterboard->bootinfo.board_id = VEXPRESS_BOARD_ID;
     daughterboard->bootinfo.loader_start = daughterboard->loader_start;

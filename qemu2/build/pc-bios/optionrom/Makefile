@@ -1,1 +1,1 @@
-/home/vboxuser/qemu/pc-bios/optionrom/Makefile
+/home/vboxuser/diplom/qemu2/pc-bios/optionrom/Makefile

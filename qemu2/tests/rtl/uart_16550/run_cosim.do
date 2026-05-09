@@ -16,6 +16,10 @@ if {[file exists bridge_dpi.so]} {
   file delete -force bridge_dpi.so
 }
 
+if {[file exists work]} {
+  file delete -force work
+}
+
 echo "Building DPI bridge shared library..."
 exec g++ -m32 -shared -fPIC -O2 bridge_dpi.cpp -o bridge_dpi.so
 

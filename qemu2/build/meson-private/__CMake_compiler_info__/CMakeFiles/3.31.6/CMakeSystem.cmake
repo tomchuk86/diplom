@@ -3,7 +3,7 @@ set(CMAKE_HOST_SYSTEM_NAME "Linux")
 set(CMAKE_HOST_SYSTEM_VERSION "6.14.0-37-generic")
 set(CMAKE_HOST_SYSTEM_PROCESSOR "x86_64")
 
-include("/home/vboxuser/qemu/build/meson-private/__CMake_compiler_info__/CMakeMesonTempToolchainFile.cmake")
+include("/home/vboxuser/diplom/qemu2/build/meson-private/__CMake_compiler_info__/CMakeMesonTempToolchainFile.cmake")
 
 set(CMAKE_SYSTEM "Linux-6.14.0-37-generic")
 set(CMAKE_SYSTEM_NAME "Linux")

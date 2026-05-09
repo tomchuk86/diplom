@@ -47,5 +47,3 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[8]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[9]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[0]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[1]
-
-set_global_assignment -name LAST_QUARTUS_VERSION "25.1std.0 Lite Edition"

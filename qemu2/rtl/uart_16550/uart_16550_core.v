@@ -58,7 +58,7 @@ module uart_16550_core (
       stat_tx  <= 0; stat_rx  <= 0; stat_err  <= 0; stat_irq  <= 0; intr_d  <= 0;
     end else begin
       tpsh  <= 0; rpsh  <= 0; tfl  <= 0; rfl  <= 0;
-      if (reg_we & (reg_adr == 3'd0) & ~dlab) stat_tx  <= stat_tx + 1;
+      if (reg_we & (widx < 6'd8) & (reg_adr == 3'd0) & ~dlab) stat_tx  <= stat_tx + 1;
       if (rpop & ~rmt) stat_rx  <= stat_rx + 1;
       if (rxdv) begin
         rdi  <= rxb; rpsh  <= 1;
@@ -73,10 +73,23 @@ module uart_16550_core (
           stat_err  <= stat_err + 1;
         end
       end
-      if (reg_we) case (reg_adr)
+      if (reg_we & (widx >= 6'd8) & (widx <= 6'd11)) begin
+        case (widx)
+          6'd8:  stat_tx  <= 0;
+          6'd9:  stat_rx  <= 0;
+          6'd10: begin stat_err <= 0; ovr <= 0; s_pe <= 0; s_fe <= 0; end
+          6'd11: stat_irq <= 0;
+          default: ;
+        endcase
+      end
+      if (reg_we & (widx < 6'd8)) case (reg_adr)
         0: if (dlab) dll  <= wdata8; else begin tdi  <= wdata8; tpsh  <= 1; end
         1: if (dlab) dlh  <= wdata8; else ier  <= wdata8 & 8'h0F;
-        2: begin fcr  <= wdata8; if (wdata8[1]) tfl  <= 1; if (wdata8[2]) rfl  <= 1; end
+        2: begin
+          fcr  <= wdata8;
+          if (wdata8[1]) tfl  <= 1;
+          if (wdata8[2]) begin rfl <= 1; ovr <= 0; s_pe <= 0; s_fe <= 0; end
+        end
         3: lcr  <= wdata8; 4: mcr4  <= wdata8[4:0]; 7: scr  <= wdata8;
         default: ;
       endcase

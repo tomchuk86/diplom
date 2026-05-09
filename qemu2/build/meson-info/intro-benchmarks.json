@@ -1,7 +1,7 @@
 [
   {
     "cmd": [
-      "/home/vboxuser/qemu/build/tests/bench/bufferiszero-bench",
+      "/home/vboxuser/diplom/qemu2/build/tests/bench/bufferiszero-bench",
       "--tap",
       "-k"
     ],
@@ -22,7 +22,7 @@
   },
   {
     "cmd": [
-      "/home/vboxuser/qemu/build/tests/bench/benchmark-crypto-hash",
+      "/home/vboxuser/diplom/qemu2/build/tests/bench/benchmark-crypto-hash",
       "--tap",
       "-k"
     ],
@@ -43,7 +43,7 @@
   },
   {
     "cmd": [
-      "/home/vboxuser/qemu/build/tests/bench/benchmark-crypto-hmac",
+      "/home/vboxuser/diplom/qemu2/build/tests/bench/benchmark-crypto-hmac",
       "--tap",
       "-k"
     ],
@@ -64,7 +64,7 @@
   },
   {
     "cmd": [
-      "/home/vboxuser/qemu/build/tests/bench/benchmark-crypto-cipher",
+      "/home/vboxuser/diplom/qemu2/build/tests/bench/benchmark-crypto-cipher",
       "--tap",
       "-k"
     ],
@@ -85,7 +85,7 @@
   },
   {
     "cmd": [
-      "/home/vboxuser/qemu/build/tests/bench/benchmark-crypto-akcipher",
+      "/home/vboxuser/diplom/qemu2/build/tests/bench/benchmark-crypto-akcipher",
       "--tap",
       "-k"
     ],

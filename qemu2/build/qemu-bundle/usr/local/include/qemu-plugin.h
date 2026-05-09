@@ -1,1 +1,1 @@
-/home/vboxuser/qemu/include/plugins/qemu-plugin.h
+/home/vboxuser/diplom/qemu2/include/plugins/qemu-plugin.h

@@ -1,1 +1,1 @@
-/home/vboxuser/qemu/.gdbinit
+/home/vboxuser/diplom/qemu2/.gdbinit

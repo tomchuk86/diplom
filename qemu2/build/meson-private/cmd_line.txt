@@ -4,5 +4,5 @@ plugins = true
 gdb = /usr/bin/gdb
 
 [properties]
-native_file = ['/home/vboxuser/qemu/build/config-meson.cross']
+native_file = ['/home/vboxuser/diplom/qemu2/build/config-meson.cross']
 

@@ -8,7 +8,6 @@ c_link_args = []
 cpp_link_args = []
 # environment defaults, can still be overridden on 
 # the command line
-werror = true
 [project options]
 
 [binaries]

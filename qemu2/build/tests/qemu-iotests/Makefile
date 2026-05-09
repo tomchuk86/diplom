@@ -1,1 +1,1 @@
-/home/vboxuser/qemu/tests/qemu-iotests/Makefile
+/home/vboxuser/diplom/qemu2/tests/qemu-iotests/Makefile

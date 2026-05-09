@@ -1,1 +1,1 @@
-/home/vboxuser/qemu/pc-bios/skiboot.lid
+/home/vboxuser/diplom/qemu2/pc-bios/skiboot.lid
