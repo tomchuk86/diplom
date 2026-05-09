@@ -20,18 +20,22 @@ static unsigned long region_size = 0x1000;
 module_param(region_size, ulong, 0644);
 
 /* Registers */
+/*
+ * The RTL APB wrapper exposes 16550 registers as 32-bit words:
+ * register index N is located at byte offset N * 4.
+ */
 #define UART_RBR 0x00
 #define UART_THR 0x00
 #define UART_DLL 0x00
-#define UART_IER 0x01
-#define UART_DLM 0x01
-#define UART_IIR 0x02
-#define UART_FCR 0x02
-#define UART_LCR 0x03
-#define UART_MCR 0x04
-#define UART_LSR 0x05
-#define UART_MSR 0x06
-#define UART_SCR 0x07
+#define UART_IER 0x04
+#define UART_DLM 0x04
+#define UART_IIR 0x08
+#define UART_FCR 0x08
+#define UART_LCR 0x0C
+#define UART_MCR 0x10
+#define UART_LSR 0x14
+#define UART_MSR 0x18
+#define UART_SCR 0x1C
 
 #define UART_TX_COUNT 0x20
 #define UART_RX_COUNT 0x24
@@ -166,6 +170,7 @@ static int __init mod_init(void){
     dev.base = ioremap(base_addr, region_size);
     if(!dev.base) return -ENOMEM;
 
+    init_uart();
     misc_register(&misc);
     pr_info("uart driver loaded\n");
     return 0;

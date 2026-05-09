@@ -1,0 +1,51 @@
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSEMA5F31C6
+set_global_assignment -name TOP_LEVEL_ENTITY hps_uart_bridge_top
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+
+set_global_assignment -name VERILOG_FILE hps_uart_bridge_top.v
+set_global_assignment -name QIP_FILE soc_system/synthesis/soc_system.qip
+set_global_assignment -name SDC_FILE hps_uart_bridge.sdc
+
+# DE1-SoC clock, reset key, LEDs, and external UART on GPIO_0.
+set_location_assignment PIN_AF14 -to CLOCK_50
+set_location_assignment PIN_AA14 -to KEY[0]
+set_location_assignment PIN_AA15 -to KEY[1]
+set_location_assignment PIN_W15  -to KEY[2]
+set_location_assignment PIN_Y16  -to KEY[3]
+set_location_assignment PIN_V16  -to LEDR[0]
+set_location_assignment PIN_W16  -to LEDR[1]
+set_location_assignment PIN_V17  -to LEDR[2]
+set_location_assignment PIN_V18  -to LEDR[3]
+set_location_assignment PIN_W17  -to LEDR[4]
+set_location_assignment PIN_W19  -to LEDR[5]
+set_location_assignment PIN_Y19  -to LEDR[6]
+set_location_assignment PIN_W20  -to LEDR[7]
+set_location_assignment PIN_W21  -to LEDR[8]
+set_location_assignment PIN_Y21  -to LEDR[9]
+
+# FPGA UART pins:
+# GPIO_0[0] = FPGA TX -> external USB-UART RX
+# GPIO_0[1] = FPGA RX <- external USB-UART TX
+set_location_assignment PIN_AC18 -to GPIO_0[0]
+set_location_assignment PIN_Y17  -to GPIO_0[1]
+
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK_50
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[4]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[5]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[6]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[7]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[8]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LEDR[9]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[1]
+
+set_global_assignment -name LAST_QUARTUS_VERSION "25.1std.0 Lite Edition"

@@ -1,0 +1,33 @@
+
+State Machine - |hps_uart_bridge_top|soc_system:u_soc_system|soc_system_mm_interconnect_0:mm_interconnect_0|altera_merlin_burst_adapter:uart_0_avalon_slave_burst_adapter|altera_merlin_burst_adapter_13_1:altera_merlin_burst_adapter_13_1.burst_adapter|state
+Name state.ST_IDLE state.ST_UNCOMP_WR_SUBBURST state.ST_UNCOMP_TRANS state.ST_COMP_TRANS 
+state.ST_IDLE 0 0 0 0 
+state.ST_COMP_TRANS 1 0 0 1 
+state.ST_UNCOMP_TRANS 1 0 1 0 
+state.ST_UNCOMP_WR_SUBBURST 1 1 0 0 
+
+State Machine - |hps_uart_bridge_top|soc_system:u_soc_system|avalon_apb_uart_16550:uart_0|apb_uart_16550:u_uart|uart_16550_core:u|tsm
+Name tsm.011 tsm.010 tsm.001 tsm.000 tsm.100 
+tsm.000 0 0 0 0 0 
+tsm.001 0 0 1 1 0 
+tsm.010 0 1 0 1 0 
+tsm.011 1 0 0 1 0 
+tsm.100 0 0 0 1 1 
+
+State Machine - |hps_uart_bridge_top|soc_system:u_soc_system|avalon_apb_uart_16550:uart_0|apb_uart_16550:u_uart|uart_16550_core:u|uart_rx:u_rx|st
+Name st.S5 st.S4 st.S3 st.S2 st.S1 st.S0 
+st.S0 0 0 0 0 0 0 
+st.S1 0 0 0 0 1 1 
+st.S2 0 0 0 1 0 1 
+st.S3 0 0 1 0 0 1 
+st.S4 0 1 0 0 0 1 
+st.S5 1 0 0 0 0 1 
+
+State Machine - |hps_uart_bridge_top|soc_system:u_soc_system|avalon_apb_uart_16550:uart_0|apb_uart_16550:u_uart|uart_16550_core:u|uart_tx:u_tx|state
+Name state.S_STOP2 state.S_STOP1 state.S_PAR state.S_DATA state.S_START state.S_IDLE 
+state.S_IDLE 0 0 0 0 0 0 
+state.S_START 0 0 0 0 1 1 
+state.S_DATA 0 0 0 1 0 1 
+state.S_PAR 0 0 1 0 0 1 
+state.S_STOP1 0 1 0 0 0 1 
+state.S_STOP2 1 0 0 0 0 1 
