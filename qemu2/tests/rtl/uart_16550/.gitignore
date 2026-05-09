@@ -1,0 +1,7 @@
+work/
+*.wlf
+transcript
+tcl_stacktrace.txt
+*.vcd
+*.so
+sim_transcript.log

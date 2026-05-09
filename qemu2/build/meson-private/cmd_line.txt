@@ -1,0 +1,8 @@
+[options]
+docs = disabled
+plugins = true
+gdb = /usr/bin/gdb
+
+[properties]
+native_file = ['/home/vboxuser/qemu/build/config-meson.cross']
+
