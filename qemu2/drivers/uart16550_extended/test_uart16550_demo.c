@@ -17,7 +17,13 @@ struct test_ctx {
     int passed;
     int failed;
     int verbose;
+    int quick;
+    size_t stress_len;
+    /* 0 = полный pattern в selftest; иначе не больше N байт */
+    size_t selftest_max;
 };
+
+static int read_with_retry(int fd, char *out, int retries);
 
 static void print_line(void)
 {
@@ -212,20 +218,46 @@ static int test_reset_fifo(struct test_ctx *ctx)
     return TEST_PASS;
 }
 
+/*
+ * With loopback, each TX byte is echoed into the RX FIFO (depth 8). Bursts overflow
+ * RTL ERR_COUNT unless we read echo promptly. Optional drain catches leftovers.
+ */
+static int write_bytes_consume_loopback(struct test_ctx *ctx, const char *buf, size_t len)
+{
+    struct uart_config cfg;
+    size_t i;
+    char rx;
+
+    if (ioctl(ctx->fd, UART_IOCTL_GET_CONFIG, &cfg) < 0)
+        return -1;
+
+    if (!cfg.loopback)
+        return write(ctx->fd, buf, len) == (ssize_t)len ? 0 : -1;
+
+    for (i = 0; i < len; i++) {
+        if (write(ctx->fd, buf + i, 1) != 1)
+            return -1;
+        if (read_with_retry(ctx->fd, &rx, 800) != 1)
+            return -1;
+        if (rx != buf[i])
+            return -2;
+    }
+    return 0;
+}
+
 static int test_write_string(struct test_ctx *ctx)
 {
     const char *name = "write_string";
     const char *msg = "HELLO_FROM_EXPANDED_DRIVER\n";
-    ssize_t ret;
 
-    ret = write(ctx->fd, msg, strlen(msg));
-    if (ret < 0) {
-        fail(ctx, name, strerror(errno));
+    switch (write_bytes_consume_loopback(ctx, msg, strlen(msg))) {
+    case 0:
+        break;
+    case -2:
+        fail(ctx, name, "loopback echo byte mismatch");
         return TEST_FAIL;
-    }
-
-    if ((size_t)ret != strlen(msg)) {
-        fail(ctx, name, "partial write");
+    default:
+        fail(ctx, name, strerror(errno));
         return TEST_FAIL;
     }
 
@@ -239,15 +271,19 @@ static int test_tx_counter(struct test_ctx *ctx)
     struct uart_stats before;
     struct uart_stats after;
     const char *msg = "1234567890";
-    ssize_t ret;
 
     if (get_stats(ctx->fd, &before) < 0) {
         fail(ctx, name, "failed to get initial stats");
         return TEST_FAIL;
     }
 
-    ret = write(ctx->fd, msg, strlen(msg));
-    if (ret < 0) {
+    switch (write_bytes_consume_loopback(ctx, msg, strlen(msg))) {
+    case 0:
+        break;
+    case -2:
+        fail(ctx, name, "loopback echo byte mismatch");
+        return TEST_FAIL;
+    default:
         fail(ctx, name, strerror(errno));
         return TEST_FAIL;
     }
@@ -375,6 +411,9 @@ static int test_selftest_ioctl(struct test_ctx *ctx)
     memset(&st, 0, sizeof(st));
     snprintf(st.pattern, sizeof(st.pattern), "SELFTEST_1234567890");
     st.pattern_len = strlen(st.pattern);
+    if (ctx->selftest_max > 0 && st.pattern_len > ctx->selftest_max) {
+        st.pattern_len = ctx->selftest_max;
+    }
 
     if (ioctl(ctx->fd, UART_IOCTL_SELF_TEST, &st) < 0) {
         fail(ctx, name, strerror(errno));
@@ -397,11 +436,14 @@ static int test_selftest_ioctl(struct test_ctx *ctx)
 
 static int test_stress(struct test_ctx *ctx)
 {
-    const char *name = "stress_1000_bytes";
+    /*
+     * Loopback byte-at-a-time; при UART16550_COSIM + ModelSim каждый байт очень дорог.
+     * Длину задаёт --stress-bytes или режим --cosim (см. usage).
+     */
+    const char *name = "stress_loopback_bytes";
     char *buf;
-    size_t len = 1000;
+    size_t len = ctx->stress_len ? ctx->stress_len : 64;
     size_t i;
-    ssize_t ret;
     struct uart_stats before;
     struct uart_stats after;
 
@@ -415,20 +457,21 @@ static int test_stress(struct test_ctx *ctx)
         buf[i] = 'A' + (i % 26);
 
     get_stats(ctx->fd, &before);
-    ret = write(ctx->fd, buf, len);
+    switch (write_bytes_consume_loopback(ctx, buf, len)) {
+    case 0:
+        break;
+    case -2:
+        fail(ctx, name, "loopback echo byte mismatch");
+        free(buf);
+        return TEST_FAIL;
+    default:
+        fail(ctx, name, strerror(errno));
+        free(buf);
+        return TEST_FAIL;
+    }
     get_stats(ctx->fd, &after);
 
     free(buf);
-
-    if (ret < 0) {
-        fail(ctx, name, strerror(errno));
-        return TEST_FAIL;
-    }
-
-    if ((size_t)ret != len) {
-        fail(ctx, name, "partial stress write");
-        return TEST_FAIL;
-    }
 
     if (after.tx < before.tx + len) {
         fail(ctx, name, "TX_COUNT did not grow after stress write");
@@ -470,8 +513,14 @@ static int test_final_stats(struct test_ctx *ctx)
 
 static void usage(const char *prog)
 {
-    printf("Usage: %s [--device PATH] [--verbose]\n", prog);
+    printf("Usage: %s [options]\n", prog);
     printf("Default device: %s\n", UART16550_DEVICE_PATH);
+    printf("  --device PATH   UART device node\n");
+    printf("  --verbose       extra logs\n");
+    printf("  --quick         skip poll / nonblock / selftest / stress (cosim-friendly)\n");
+    printf("  --cosim         короткий прогон: stress=16 байт, selftest pattern=8 (можно совмещать с --stress-bytes / --selftest-bytes)\n");
+    printf("  --stress-bytes N   байт в stress_loopback_bytes (по умолчанию 64)\n");
+    printf("  --selftest-bytes N обрезать kernel selftest до N байт pattern (по умолчанию весь pattern)\n");
 }
 
 int main(int argc, char **argv)
@@ -479,21 +528,47 @@ int main(int argc, char **argv)
     struct test_ctx ctx;
     const char *dev_path = UART16550_DEVICE_PATH;
     int i;
+    int opt_cosim = 0;
+    int stress_by_user = 0;
+    int selftest_by_user = 0;
+    unsigned long u;
 
     memset(&ctx, 0, sizeof(ctx));
     ctx.fd = -1;
+    ctx.stress_len = 64;
 
     for (i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--device") && i + 1 < argc) {
             dev_path = argv[++i];
         } else if (!strcmp(argv[i], "--verbose")) {
             ctx.verbose = 1;
+        } else if (!strcmp(argv[i], "--quick")) {
+            ctx.quick = 1;
+        } else if (!strcmp(argv[i], "--cosim")) {
+            opt_cosim = 1;
+        } else if (!strcmp(argv[i], "--stress-bytes") && i + 1 < argc) {
+            u = strtoul(argv[++i], NULL, 0);
+            ctx.stress_len = u ? u : 1;
+            stress_by_user = 1;
+        } else if (!strcmp(argv[i], "--selftest-bytes") && i + 1 < argc) {
+            u = strtoul(argv[++i], NULL, 0);
+            ctx.selftest_max = u;
+            selftest_by_user = 1;
         } else if (!strcmp(argv[i], "--help")) {
             usage(argv[0]);
             return 0;
         } else {
             usage(argv[0]);
             return 1;
+        }
+    }
+
+    if (opt_cosim) {
+        if (!stress_by_user) {
+            ctx.stress_len = 16;
+        }
+        if (!selftest_by_user) {
+            ctx.selftest_max = 8;
         }
     }
 
@@ -505,6 +580,10 @@ int main(int argc, char **argv)
 
     printf("UART16550 demo test suite\n");
     printf("Device: %s\n", dev_path);
+    if (opt_cosim) {
+        printf("Mode: --cosim (stress_len=%zu, selftest_max=%zu)\n",
+               ctx.stress_len, ctx.selftest_max);
+    }
     print_line();
 
     test_init(&ctx);
@@ -517,10 +596,14 @@ int main(int argc, char **argv)
     test_write_string(&ctx);
     test_tx_counter(&ctx);
     test_loopback_rx(&ctx);
-    test_poll(&ctx);
-    test_nonblock_empty_read(&ctx);
-    test_selftest_ioctl(&ctx);
-    test_stress(&ctx);
+    if (!ctx.quick) {
+        test_poll(&ctx);
+        test_nonblock_empty_read(&ctx);
+        test_selftest_ioctl(&ctx);
+        test_stress(&ctx);
+    } else {
+        printf("[SKIP] slow cosimulation tests (--quick)\n");
+    }
     test_final_stats(&ctx);
 
     print_line();

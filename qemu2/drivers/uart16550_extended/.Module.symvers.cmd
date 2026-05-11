@@ -1,0 +1,1 @@
+savedcmd_Module.symvers :=  /home/vboxuser/buildroot/output/build/linux-6.18.7/scripts/mod/modpost -M          -o Module.symvers -n -T modules.order -i /home/vboxuser/buildroot/output/build/linux-6.18.7/Module.symvers -e 

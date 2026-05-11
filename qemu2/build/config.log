@@ -1,5 +1,5 @@
-# QEMU configure log Сб 09 мая 2026 23:43:34 MSK
-# Configured with: '/home/vboxuser/diplom/qemu2/configure' '--target-list=arm-softmmu' '--disable-docs' '--enable-plugins'
+# QEMU configure log Вс 10 мая 2026 23:41:07 MSK
+# Configured with: '../configure' '--target-list=arm-softmmu'
 
 #
 cc -c -o config-temp/qemu-conf.o config-temp/qemu-conf.c

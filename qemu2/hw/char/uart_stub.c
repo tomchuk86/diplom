@@ -3,7 +3,7 @@
 #include "qom/object.h"
 #include "system/memory.h"
 #include "qapi/error.h"
-#include "hw/char/uart_cosim_socket.h"
+#include "hw/char/uart_cosim.h"
 
 #define TYPE_UART_STUB "uart-stub"
 OBJECT_DECLARE_SIMPLE_TYPE(UARTStubState, UART_STUB)
@@ -408,6 +408,26 @@ static void uart_local_write(UARTStubState *s, hwaddr addr, uint64_t value, unsi
 
 #if UART_STUB_COSIM
 /*
+ * Default DPI ops: forward MMIO to the built-in behavioral model (no TCP).
+ * RTL glue replaces these via uart_cosim_register_dpi_ops() before uart-stub init.
+ */
+static uint64_t uart_stub_cosim_fallback_read(void *opaque, uint32_t offset,
+                                                uint32_t size)
+{
+    UARTStubState *s = opaque;
+
+    return uart_local_read(s, (hwaddr)offset, size);
+}
+
+static void uart_stub_cosim_fallback_write(void *opaque, uint32_t offset,
+                                           uint64_t data, uint32_t size)
+{
+    UARTStubState *s = opaque;
+
+    uart_local_write(s, (hwaddr)offset, data, size);
+}
+
+/*
  * QEMU MMIO uses the same board/RTL map as the DE1-SoC Platform Designer
  * system: 16550 register index N is exposed at byte offset N * 4.
  */
@@ -428,11 +448,13 @@ static uint64_t uart_cosim_read(UARTStubState *s, hwaddr addr, unsigned size)
     cosim_addr = uart_cosim_translate_addr(addr);
     value = cosim_uart_read(cosim_addr, (uint32_t)size);
 
-    printf("UART16550 COSIM: read addr=0x%llx (cosim=0x%x) size=%u -> 0x%llx\n",
-           (unsigned long long)addr,
-           cosim_addr,
-           size,
-           (unsigned long long)value);
+    if (cosim_addr != UART_REG_LSR) {
+        printf("UART16550 COSIM: read addr=0x%llx (cosim=0x%x) size=%u -> 0x%llx\n",
+               (unsigned long long)addr,
+               cosim_addr,
+               size,
+               (unsigned long long)value);
+    }
 
     return value;
 }
@@ -534,11 +556,26 @@ static void uart_stub_init(Object *obj)
 
     printf("uart_stub_init called\n");
 #if UART_STUB_COSIM
-    if (g_strcmp0(g_getenv("UART16550_COSIM"), "1") == 0) {
-        s->cosim_connected = (cosim_uart_init() == 0);
-    } else {
-        s->cosim_connected = false;
-        printf("UART16550 COSIM disabled (set UART16550_COSIM=1 to enable)\n");
+    {
+        const char *cm = g_getenv("UART16550_COSIM");
+
+        if (cm && g_strcmp0(cm, "0") != 0) {
+            if (g_strcmp0(cm, "dpi") == 0) {
+                if (!uart_cosim_dpi_has_ops()) {
+                    uart_cosim_register_dpi_ops(&(UartCosimDpiOps){
+                        .mmio_read = uart_stub_cosim_fallback_read,
+                        .mmio_write = uart_stub_cosim_fallback_write,
+                        .opaque = s,
+                    });
+                }
+            }
+            s->cosim_connected = (cosim_uart_init() == 0);
+        } else {
+            s->cosim_connected = false;
+            printf("UART16550 COSIM disabled "
+                   "(UART16550_COSIM=1|socket — RTL TCP bridge; "
+                   "dpi — in-process callbacks; UART_COSIM_LOG optional)\n");
+        }
     }
 #else
     s->cosim_connected = false;

@@ -18,6 +18,8 @@ module uart_16550_core (
   reg ovr, s_pe, s_fe;
   reg [31:0] stat_tx, stat_rx, stat_err, stat_irq;
   reg        intr_d;
+  /* uart_rx holds valid across many clk until next tick_16x — count one push/err per byte */
+  reg        rxdv_d;
   wire dlab  = lcr[7];
   wire [1:0] wl  = lcr[1:0];
   wire st2 = lcr[2], pen = lcr[3], pse = lcr[4], brk  = lcr[6];
@@ -56,11 +58,12 @@ module uart_16550_core (
     if (!rst_n) begin
       dll  <= 1; dlh  <= 0; ier  <= 0; fcr  <= 0; lcr  <= 8'h03; mcr4  <= 0; scr  <= 0; msr  <= 8'hB0; ovr  <= 0; s_pe  <= 0; s_fe  <= 0;
       stat_tx  <= 0; stat_rx  <= 0; stat_err  <= 0; stat_irq  <= 0; intr_d  <= 0;
+      rxdv_d   <= 1'b0;
     end else begin
       tpsh  <= 0; rpsh  <= 0; tfl  <= 0; rfl  <= 0;
       if (reg_we & (widx < 6'd8) & (reg_adr == 3'd0) & ~dlab) stat_tx  <= stat_tx + 1;
       if (rpop & ~rmt) stat_rx  <= stat_rx + 1;
-      if (rxdv) begin
+      if (rxdv & ~rxdv_d) begin
         rdi  <= rxb; rpsh  <= 1;
         if (rff) begin
           ovr  <= 1;
@@ -73,6 +76,7 @@ module uart_16550_core (
           stat_err  <= stat_err + 1;
         end
       end
+      rxdv_d  <= rxdv;
       if (reg_we & (widx >= 6'd8) & (widx <= 6'd11)) begin
         case (widx)
           6'd8:  stat_tx  <= 0;

@@ -16,7 +16,7 @@ unset LD_LIBRARY_PATH
 unset NM
 unset OBJCFLAGS
 unset OBJCOPY
-PATH='/opt/altera_lite/25.1std/quartus/bin:/home/vboxuser/intelFPGA_lite/20.1/quartus/bin:/root/intelFPGA/20.1/modelsim_ase/bin:/usr/share/cursor/resources/app/resources/helpers:/opt/altera_lite/25.1std/quartus/bin:/home/vboxuser/intelFPGA_lite/20.1/quartus/bin:/root/intelFPGA/20.1/modelsim_ase/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'
+PATH='/opt/altera_lite/25.1std/quartus/bin:/home/vboxuser/intelFPGA_lite/20.1/quartus/bin:/root/intelFPGA/20.1/modelsim_ase/bin:/opt/altera_lite/25.1std/quartus/bin:/home/vboxuser/intelFPGA_lite/20.1/quartus/bin:/root/intelFPGA/20.1/modelsim_ase/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'
 export PATH
 unset PKG_CONFIG
 unset PKG_CONFIG_LIBDIR
@@ -31,4 +31,4 @@ unset STRIP
 unset WIDL
 unset WINDRES
 unset WINDMC
-exec '/home/vboxuser/diplom/qemu2/configure' '--target-list=arm-softmmu' '--disable-docs' '--enable-plugins' "$@"
+exec '../configure' '--target-list=arm-softmmu' "$@"

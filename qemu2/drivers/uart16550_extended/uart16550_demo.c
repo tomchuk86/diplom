@@ -11,6 +11,7 @@
 #include <linux/poll.h>
 #include <linux/types.h>
 #include <linux/string.h>
+#include <asm/processor.h>
 
 #define DRV_NAME "uart16550_demo"
 #define DRV_VERSION "2.0-diploma"
@@ -248,6 +249,8 @@ static int uart_wait_lsr(u8 mask, bool set, unsigned int timeout_us)
                 return 0;
         }
 
+        if ((i & 0x3f) == 0)
+            cpu_relax();
         udelay(1);
     }
 
@@ -661,7 +664,7 @@ static const struct file_operations uart_fops = {
     .write = uart_demo_write,
     .unlocked_ioctl = uart_demo_ioctl,
     .poll = uart_demo_poll,
-    .llseek = no_llseek,
+    .llseek = noop_llseek,
 };
 
 static struct miscdevice uart_misc = {

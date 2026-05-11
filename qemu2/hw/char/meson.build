@@ -38,8 +38,14 @@ system_ss.add(when: 'CONFIG_STM32L4X5_USART', if_true: files('stm32l4x5_usart.c'
 system_ss.add(when: 'CONFIG_MCHP_PFSOC_MMUART', if_true: files('mchp_pfsoc_mmuart.c'))
 system_ss.add(when: 'CONFIG_HTIF', if_true: files('riscv_htif.c'))
 system_ss.add(when: 'CONFIG_GOLDFISH_TTY', if_true: files('goldfish_tty.c'))
-system_ss.add(files('uart_stub.c'))
-system_ss.add(files('uart_cosim_socket.c'))
+system_ss.add(files(
+  'uart_stub.c',
+  'uart_cosim_protocol.c',
+  'uart_cosim_log.c',
+  'uart_cosim_socket.c',
+  'uart_cosim_dpi.c',
+  'uart_cosim_core.c',
+))
 
 specific_ss.add(when: 'CONFIG_TERMINAL3270', if_true: files('terminal3270.c'))
 specific_ss.add(when: 'CONFIG_PSERIES', if_true: files('spapr_vty.c'))

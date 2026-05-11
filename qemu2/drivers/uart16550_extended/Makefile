@@ -8,7 +8,12 @@ CC := $(CROSS_COMPILE)gcc
 
 USER_CFLAGS := -O2 -Wall -Wextra -std=gnu99
 
-.PHONY: all module user clean install unload reload test lines
+# Сборка под гостя Buildroot (vexpress-a9 / QEMU): модуль + статический тест для 9p share
+BR_HOST ?= /home/vboxuser/buildroot/output/host
+BR_KDIR ?= /home/vboxuser/buildroot/output/build/linux-6.18.7
+BR_CROSS ?= $(BR_HOST)/bin/arm-none-linux-gnueabihf-
+
+.PHONY: all module user clean install unload reload test lines guest guest-module guest-user guest-clean
 
 all: module user
 
@@ -40,3 +45,16 @@ lines:
 clean:
 	$(MAKE) -C $(KDIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) M=$(PWD) clean
 	rm -f test_uart16550_demo
+
+guest-module:
+	$(MAKE) -C $(BR_KDIR) ARCH=arm CROSS_COMPILE=$(BR_CROSS) M=$(PWD) modules
+
+# Статическая линковка — в rootfs не нужен тот же динамический libc, что на хосте
+guest-user: test_uart16550_demo.c uart16550_demo.h
+	$(BR_CROSS)gcc $(USER_CFLAGS) -static -I$(PWD) $(PWD)/test_uart16550_demo.c -o $(PWD)/test_uart16550_demo
+
+guest: guest-module guest-user
+
+guest-clean:
+	rm -f test_uart16550_demo
+	$(MAKE) -C $(BR_KDIR) ARCH=arm CROSS_COMPILE=$(BR_CROSS) M=$(PWD) clean

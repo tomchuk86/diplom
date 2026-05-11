@@ -21812,7 +21812,11 @@
           "/home/vboxuser/diplom/qemu2/hw/char/riscv_htif.c",
           "/home/vboxuser/diplom/qemu2/hw/char/goldfish_tty.c",
           "/home/vboxuser/diplom/qemu2/hw/char/uart_stub.c",
+          "/home/vboxuser/diplom/qemu2/hw/char/uart_cosim_protocol.c",
+          "/home/vboxuser/diplom/qemu2/hw/char/uart_cosim_log.c",
           "/home/vboxuser/diplom/qemu2/hw/char/uart_cosim_socket.c",
+          "/home/vboxuser/diplom/qemu2/hw/char/uart_cosim_dpi.c",
+          "/home/vboxuser/diplom/qemu2/hw/char/uart_cosim_core.c",
           "/home/vboxuser/diplom/qemu2/hw/core/loader-fit.c",
           "/home/vboxuser/diplom/qemu2/hw/core/generic-loader.c",
           "/home/vboxuser/diplom/qemu2/hw/core/guest-loader.c",
@@ -22802,7 +22806,7 @@
       "gio-2.0",
       "gio-unix-2.0",
       "slirp",
-      "dep191610523352103609439349797818025977157",
+      "dep226366480832523881752969808018827638343",
       "ncursesw",
       "glib-2.0",
       "gmodule-no-export-2.0",
@@ -23085,7 +23089,7 @@
       "gio-unix-2.0",
       "gnutls",
       "slirp",
-      "dep191610523352103609439349797818025977157",
+      "dep226366480832523881752969808018827638343",
       "ncursesw",
       "glib-2.0",
       "gmodule-no-export-2.0",
@@ -23351,7 +23355,7 @@
       "gio-unix-2.0",
       "gnutls",
       "slirp",
-      "dep191610523352103609439349797818025977157",
+      "dep226366480832523881752969808018827638343",
       "ncursesw",
       "glib-2.0",
       "gmodule-no-export-2.0",
@@ -23560,7 +23564,7 @@
       "gio-unix-2.0",
       "gnutls",
       "slirp",
-      "dep191610523352103609439349797818025977157",
+      "dep226366480832523881752969808018827638343",
       "ncursesw",
       "glib-2.0",
       "gmodule-no-export-2.0",
@@ -23744,7 +23748,7 @@
       "gio-unix-2.0",
       "gnutls",
       "slirp",
-      "dep191610523352103609439349797818025977157",
+      "dep226366480832523881752969808018827638343",
       "ncursesw",
       "glib-2.0",
       "gmodule-no-export-2.0",
@@ -28399,7 +28403,7 @@
     "extra_files": [],
     "subproject": "berkeley-testfloat-3",
     "dependencies": [
-      "dep219146797609031756646251127260510518170"
+      "dep306675483089660785306729938743471353280"
     ],
     "depends": [],
     "installed": false
@@ -28476,7 +28480,7 @@
     "extra_files": [],
     "subproject": "berkeley-testfloat-3",
     "dependencies": [
-      "dep219146797609031756646251127260510518170"
+      "dep306675483089660785306729938743471353280"
     ],
     "depends": [],
     "installed": false
@@ -28633,9 +28637,9 @@
     "extra_files": [],
     "subproject": null,
     "dependencies": [
-      "dep219146797609031756646251127260510518170",
-      "dep193901421847007002535067693778948089836",
-      "dep85541586548478541314617102345492083645"
+      "dep306675483089660785306729938743471353280",
+      "dep270986605139953638112791311750290049342",
+      "dep100085673874673865996458939964950224298"
     ],
     "depends": [],
     "win_subsystem": "console",
@@ -28792,8 +28796,8 @@
     "extra_files": [],
     "subproject": null,
     "dependencies": [
-      "dep193901421847007002535067693778948089836",
-      "dep219146797609031756646251127260510518170"
+      "dep270986605139953638112791311750290049342",
+      "dep306675483089660785306729938743471353280"
     ],
     "depends": [],
     "win_subsystem": "console",
@@ -28940,7 +28944,7 @@
     "extra_files": [],
     "subproject": null,
     "dependencies": [
-      "dep219146797609031756646251127260510518170"
+      "dep306675483089660785306729938743471353280"
     ],
     "depends": [],
     "win_subsystem": "console",

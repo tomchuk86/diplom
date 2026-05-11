@@ -1,183 +1,147 @@
-# Запуск цепочки: RTL (ModelSim) — bridge — QEMU — Buildroot — драйвер
+# UART 16550: QEMU ↔ RTL cosim (TCP bridge + DPI)
 
-Проект: косимуляция UART 16550 между **QEMU** (`uart-stub` + сокет), **DPI-bridge** (`bridge_dpi.cpp`) и **RTL** (`apb_uart_16550` / `uart_16550_core`).
+Полная цепочка **гость Linux → драйвер → MMIO в QEMU → TCP → `bridge_dpi.so` → DPI → APB RTL** задаётся **`UART16550_COSIM=1`** (или **`socket`**, или любое ненулевое значение **кроме** **`dpi`**).
 
-## Зависимости (хост, Linux)
-
-- Собранный **QEMU** из этого дерева: `ninja -C build qemu-system-arm`
-- **ModelSim** Intel FPGA Edition (у вас может быть путь вида `/root/intelFPGA/20.1/modelsim_ase/linuxaloem/vsim`)
-- **i386** библиотеки и multilib для DPI (32-bit vsim):
-  ```bash
-  sudo dpkg --add-architecture i386
-  sudo apt update
-  sudo apt install -y gcc-multilib g++-multilib libc6-dev-i386
-  ```
-- **Buildroot** с собранными образами, пути ниже — пример для типичной сборки:
-  - `zImage`, `vexpress-v2p-ca9.dtb`, `rootfs.ext2` в `~/buildroot/output/images/`
-
-## Порядок запуска (важно)
-
-1. Сначала **ModelSim + bridge** (слушает TCP `127.0.0.1:1234`).
-2. Затем **QEMU** (подключается к bridge как клиент).
-3. В госте **insmod** драйвера и тест.
+Режим **`UART16550_COSIM=dpi`** — только **function-pointer** MMIO внутри процесса QEMU (`uart_cosim_register_dpi_ops`), без подключения ModelSim по TCP.
 
 ---
 
-## 1. Остановить старые процессы
+## Переменные окружения
 
-```bash
-pkill -f qemu-system-arm
-pkill -f vsim
-```
+| `UART16550_COSIM` | Режим |
+|-------------------|--------|
+| не задано / `0` | Локальная модель UART только в QEMU (cosim выключен). |
+| `1`, `socket` или другое ≠ `dpi` | QEMU подключается к **`127.0.0.1:1234`** и обменивается строками `W`/`R` с ModelSim bridge. |
+| `dpi` | Колбэки DPI в том же процессе; если ops не заданы — автоматический fallback на встроенную модель. |
 
----
+**`UART_COSIM_LOG`**: `0` — тихо; `1` — по умолчанию (меньше логов по чтению LSR `0x14`); `2` — все смещения. Влияет на QEMU (`[COSIM]`) и на bridge (`[BRIDGE]`).
 
-## 2. Собрать драйвер и userspace-тест (на хосте)
-
-```bash
-cd /home/vboxuser/diplom/qemu2/drivers/uart16550_demo
-make clean
-make
-```
-
-При ошибках заголовков ядра один раз:
-
-```bash
-make -C /path/to/buildroot/output/build/linux-VERSION \
-  ARCH=arm \
-  CROSS_COMPILE=/path/to/buildroot/output/host/bin/arm-none-linux-gnueabihf- \
-  modules_prepare
-```
-
-(подставьте свой `linux-VERSION` и путь к toolchain из Buildroot)
-
----
-
-## 3. Терминал A — RTL + DPI bridge
+Проверка парсера протокола на хосте (без QEMU/ModelSim):
 
 ```bash
 cd /home/vboxuser/diplom/qemu2/tests/rtl/uart_16550
-sudo /path/to/modelsim_ase/linuxaloem/vsim -c -do run_cosim.do
-```
-
-Ожидаемые строки: `COSIM mode enabled`, `[BRIDGE] waiting for connection...`, после старта QEMU — `[BRIDGE] connected`.
-
-Окно не закрывать. **Не нажимать Ctrl+C** в ModelSim без нужды (симуляция встанет на паузу).
-
----
-
-## 4. Терминал B — QEMU + vexpress-a9 + Buildroot + каталог с драйвером по 9p
-
-Рекомендуемый запуск через проектный скрипт. Консоль Linux будет прямо в том
-же терминале, где запущен QEMU:
-
-```bash
-bash /home/vboxuser/diplom/qemu2/scripts/run_uart16550_qemu_telnet.sh
-```
-
-По умолчанию скрипт использует:
-
-- QEMU: `/home/vboxuser/diplom/qemu2/build/qemu-system-arm`
-- Buildroot images: `/home/vboxuser/buildroot/output/images`
-- hostshare: `/home/vboxuser/diplom/qemu2/drivers/uart16550_demo`
-
-При необходимости пути можно переопределить переменными окружения:
-
-```bash
-QEMU_BIN=/home/vboxuser/diplom/qemu2/build/qemu-system-arm \
-BUILDROOT_IMAGES=/path/to/buildroot/output/images \
-HOSTSHARE_DIR=/home/vboxuser/diplom/qemu2/drivers/uart16550_demo \
-bash /home/vboxuser/diplom/qemu2/scripts/run_uart16550_qemu_telnet.sh
-```
-
-Эквивалентная ручная команда:
-
-```bash
-/home/vboxuser/diplom/qemu2/build/qemu-system-arm \
-  -M vexpress-a9 \
-  -m 256M \
-  -kernel /path/to/buildroot/output/images/zImage \
-  -dtb /path/to/buildroot/output/images/vexpress-v2p-ca9.dtb \
-  -drive if=sd,file=/path/to/buildroot/output/images/rootfs.ext2,format=raw \
-  -append "console=ttyAMA0,115200 root=/dev/mmcblk0 rootwait rootfstype=ext4 rw" \
-  -fsdev local,id=fsdev0,path=/home/vboxuser/diplom/qemu2/drivers/uart16550_demo,security_model=none \
-  -device virtio-9p-device,fsdev=fsdev0,mount_tag=hostshare \
-  -nographic
-```
-
-Почему не `-virtfs`: на `vexpress-a9` нет PCI, используется **virtio-9p-device** (MMIO).
-
-Для выхода из QEMU нажмите `Ctrl-A`, затем `X`.
-
-По умолчанию QEMU работает без cosim и использует локальную MMIO-модель UART.
-Если нужно именно подключить RTL/ModelSim bridge, сначала запустите
-`run_cosim.do`, затем стартуйте QEMU так:
-
-```bash
-UART16550_COSIM=1 bash /home/vboxuser/diplom/qemu2/scripts/run_uart16550_qemu_telnet.sh
+make -f Makefile.bridgetest check-protocol
 ```
 
 ---
 
-## 5. В госте Buildroot (консоль QEMU, логин `root`)
+## Зависимости
+
+- Собранный **`qemu-system-arm`** из `qemu2/build`.
+- Образы Buildroot: `zImage`, `vexpress-v2p-ca9.dtb`, `rootfs.ext2`.
+- ModelSim / Questa с DPI и **32-bit** сборкой `bridge_dpi.so`, если vsim 32-bit:
+
+```bash
+sudo dpkg --add-architecture i386
+sudo apt update
+sudo apt install -y gcc-multilib g++-multilib libc6-dev-i386
+```
+
+---
+
+## Сборка QEMU
+
+```bash
+cd /home/vboxuser/diplom/qemu2/build
+ninja qemu-system-arm
+```
+
+---
+
+## Запуск полной косимуляции (порядок обязателен)
+
+### Шаг 1 — терминал A: ModelSim + RTL + bridge
+
+```bash
+cd /home/vboxuser/diplom/qemu2/tests/rtl/uart_16550
+/path/to/vsim -c -do run_cosim.do
+```
+
+Дождитесь строк **`[BRIDGE] waiting for QEMU on 127.0.0.1:1234...`**. Симулятор блокируется на **`accept`** до подключения QEMU.
+
+### Шаг 2 — терминал B: QEMU + cosim + гость
+
+```bash
+cd /home/vboxuser/diplom && UART16550_COSIM=1 UART_COSIM_LOG=1 \
+  bash qemu2/scripts/run_uart16550_qemu_telnet.sh
+```
+
+Используйте **`&&`** между `cd` и переменными, не склеивайте путь с `UART16550_COSIM=...`.
+
+В терминале A должно появиться **`[BRIDGE] QEMU connected`**, в B — **`[COSIM socket] connected to 127.0.0.1:1234`**.
+
+Гость использует MMIO по **0xff210000**; при включённом socket‑режиме транзакции обслуживает **RTL** через bridge.
+
+### Шаг 3 — в госте: модуль и тест
+
+На **хосте** перед запуском QEMU соберите **ARM** `.ko` и тест (в каталоге 9p не должно быть x86-бинарника):
+
+```bash
+cd /home/vboxuser/diplom/qemu2/drivers/uart16550_extended
+make guest
+```
+
+При другом пути Buildroot задайте `BR_HOST`, `BR_KDIR`, `BR_CROSS` (см. `Makefile`).
+
+В **госте** сначала **создайте точку монтирования и смонтируйте 9p** (одной строкой). Только `remount` без этого **не покажет файлы** с хоста.
 
 ```sh
 mkdir -p /mnt/host
-mount | grep hostshare || mount -t 9p -o trans=virtio hostshare /mnt/host
-ls -l /mnt/host
-
-rmmod uart16550_demo 2>/dev/null
-insmod /mnt/host/uart16550_demo.ko
-
-/mnt/host/test_uart16550_demo
+mount -t 9p -o trans=virtio hostshare /mnt/host
+ls -la /mnt/host
 ```
 
-База по умолчанию в драйвере — **0xff210000**. Это тот же адрес, что на DE1-SoC: `0xff200000` lightweight HPS-to-FPGA bridge + `0x00010000` base address IP в Platform Designer.
+`insmod` **строго одной строкой** (не разрывать `debug_level=2`):
+
+```sh
+insmod /mnt/host/uart16550_demo.ko base_addr=0xff210000 loopback=1 debug_level=2
+chmod +x /mnt/host/test_uart16550_demo
+/mnt/host/test_uart16550_demo --verbose --cosim
+```
+
+Каталог хоста задаётся в скрипте (`HOSTSHARE_DIR`, по умолчанию `drivers/uart16550_extended`).
 
 ---
 
-## 6. Признаки успешной работы
+## Локальный RTL-тест без QEMU
 
-- В терминале A (bridge): строки `[BRIDGE] READ/WRITE ...` по мере работы гостя.
-- В логе QEMU: `[COSIM] connected to bridge`, при чтении LSR — `read addr=0x14 (cosim=0x14)`.
-- В госте: вывод теста, в т.ч. `RX_TEST=PASS` и строка `TX=... RX=... ERR=... IRQ=...`.
+Без **`+COSIM`** тестбенч сам выполняет APB-сценарий (`run_all.do` и т.д.). С **`+COSIM`** симуляция ждёт QEMU: **`bridge_init`** делает **`accept`** на порту 1234, затем в цикле вызывается **`bridge_poll_once`** для приёма строк от QEMU.
 
 ---
 
-## 7. Локальный RTL-тест без QEMU (только ModelSim)
+## Режим DPI без TCP
 
-Только самопроверка тестбенча, без сокета:
+Для одного процесса (свой бинарник + Verilator и т.п.):
 
 ```bash
-cd /home/vboxuser/diplom/qemu2/tests/rtl/uart_16550
-/path/to/vsim -c -do run_all.do
+cd /home/vboxuser/diplom && UART16550_COSIM=dpi bash qemu2/scripts/run_uart16550_qemu_telnet.sh
 ```
 
-Результаты: `sim_result.txt`, `sim_transcript.log` (и при необходимости VCD).
+Пример клея: `tests/rtl/uart_16550/dpi_cosim_glue_example.c`.
 
 ---
 
-## 8. Типичные проблемы
+## Типичные проблемы
 
-| Симптом | Что сделать |
-|--------|-------------|
-| `[COSIM] connect failed` | Сначала запустить ModelSim `run_cosim.do`, потом QEMU. |
-| `vsim: ... export_tramp.so` / `crti.o` | Поставить `gcc-multilib`, `libc6-dev-i386` (см. зависимости). |
-| Kernel panic `unknown-block(0,0)` | Добавить `rootwait rootfstype=ext4`, проверить путь к `rootfs.ext2` и `-drive`. |
-| `/dev/uart16550_demo: No such file` | Выполнить `insmod /mnt/host/uart16550_demo.ko`; default base уже `0xff210000`. |
-| Тест `syntax error` при запуске | Пересобрать `test_uart16550_demo` через `Makefile` (кросс-компилятор arm из Buildroot). |
+| Симптом | Действие |
+|---------|----------|
+| `[COSIM socket] connect failed` | Сначала **`run_cosim.do`**, затем QEMU; проверьте, что порт 1234 свободен на localhost. |
+| QEMU стартовал первым | Остановите QEMU и запустите снова после сообщения bridge про ожидание. |
+| Нет логов MMIO | **`UART_COSIM_LOG=1`** или `2`. |
+| Ошибка multilib при сборке `bridge_dpi.so` | Установите пакеты i386/multilib (см. выше). |
 
 ---
 
-## 8. Файлы, относящиеся к цепочке
+## Файлы
 
-| Путь | Назначение |
-|------|------------|
-| `hw/char/uart_cosim_socket.c` | TCP-клиент QEMU → `127.0.0.1:1234` |
-| `hw/char/uart_stub.c` | MMIO-модель UART, cosim-хуки |
-| `tests/rtl/uart_16550/bridge_dpi.cpp` | DPI: сокет-сервер + вызов SV task |
-| `tests/rtl/uart_16550/run_cosim.do` | Сборка `bridge_dpi.so` и запуск `+COSIM` |
-| `rtl/uart_16550/*.v` | RTL UART + APB |
-| `drivers/uart16550_demo/` | Демо-драйвер и `test_uart16550_demo` |
+| Путь | Роль |
+|------|------|
+| `hw/char/uart_cosim_socket.c` | TCP-клиент, протокол строк |
+| `hw/char/uart_cosim_dpi.c` | Колбэки DPI |
+| `hw/char/uart_cosim_core.c` | Выбор socket / dpi по env |
+| `hw/char/uart_stub.c` | MMIO устройство; fallback ops только для **`dpi`** |
+| `tests/rtl/uart_16550/bridge_dpi.cpp` | Сервер `:1234`, вызов **`sv_uart_*`** |
+| `tests/rtl/uart_16550/run_cosim.do` | Сборка **`bridge_dpi.so`** + **`vsim`** |
+| `tests/rtl/uart_16550/tb_apb_uart.v` | DPI + **`bridge_poll_once`** на каждом такте в режиме COSIM |
 
-Подробнее по карте регистров и смещениям: `README_uart16550_rtl.md`, `UART16550_QEMU_INTERFACE.txt`.
+Дополнительно: **`README_uart16550_rtl.md`**, **`UART16550_QEMU_INTERFACE.txt`**.

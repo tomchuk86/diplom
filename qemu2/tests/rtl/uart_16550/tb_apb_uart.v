@@ -1,4 +1,6 @@
-// Стенд: APB-запись в UART, loopback, чтение RBR. Требуется iverilog/ModelSim.
+// Стенд: тот же путь, что на DE1-SoC: Avalon-MM (HPS lw bridge) -> avalon_apb_uart_16550 -> APB UART.
+// QEMU/cosim шлёт байтовые смещения MMIO (0x00,0x04,...,0x14,0x20,...) как Linux/драйвер на плате;
+// здесь они переводятся в avs_address = byte_off >> 2, как в Platform Designer.
 `timescale 1ns/1ps
 module tb_apb_uart;
   import "DPI-C" task bridge_init();
@@ -6,36 +8,79 @@ module tb_apb_uart;
   export "DPI-C" task sv_uart_read;
   export "DPI-C" task sv_uart_write;
 
-  reg  pclk, presetn, psel, penable, pwrite;
-  reg [7:0]  paddr;
-  reg [31:0]  pwdata;
-  reg [3:0]  pstrb;
-  wire [31:0]  prdata; wire  pready, pslverr,  uart_txd,  uart_rxd,  uart_irq;
-  apb_uart_16550 dut ( .pclk(pclk), .presetn(presetn), .psel(psel), .penable(penable), .pwrite(pwrite),
-    .paddr(paddr), .pwdata(pwdata), .pstrb(pstrb), .prdata(prdata), .pready(pready), .pslverr(pslverr),
-    .uart_txd(uart_txd), .uart_rxd(uart_rxd), .uart_irq(uart_irq) );
-  // loopback для приёма своего TX (без mcr.4, чтобы путь rxd=txd)
-  assign uart_rxd  = uart_txd;
-  initial  pclk  = 0; always  #5 pclk  = ~pclk;
+  reg        pclk, presetn;
+  reg [5:0]  avs_address;
+  reg        avs_read, avs_write;
+  reg [31:0] avs_writedata;
+  reg [3:0]  avs_byteenable;
+  wire [31:0] avs_readdata;
+  wire       avs_waitrequest;
+  wire       uart_txd, uart_rxd, uart_irq;
+
+  avalon_apb_uart_16550 dut (
+    .clk(pclk),
+    .reset_n(presetn),
+    .avs_address(avs_address),
+    .avs_read(avs_read),
+    .avs_write(avs_write),
+    .avs_writedata(avs_writedata),
+    .avs_byteenable(avs_byteenable),
+    .avs_readdata(avs_readdata),
+    .avs_waitrequest(avs_waitrequest),
+    .irq(uart_irq),
+    .uart_txd(uart_txd),
+    .uart_rxd(uart_rxd)
+  );
+  assign uart_rxd = uart_txd;
+  initial pclk = 0;
+  always #5 pclk = ~pclk;
+
   task wapb (input [7:0] a, input [7:0] d);
     begin
-      @(posedge pclk);  psel  = 1; penable  = 0; pwrite  = 1; paddr  = a;  pwdata  = {24'd0, d};  pstrb  = 4'b0001; 
-      @(posedge pclk);  penable  = 1;
-      @(posedge pclk);  psel  = 0; penable  = 0; 
+      @(posedge pclk);
+      avs_address   = a[7:2];
+      avs_writedata = {24'd0, d};
+      avs_byteenable = 4'b0001;
+      avs_write     = 1'b1;
+      avs_read      = 1'b0;
+      @(posedge pclk);
+      avs_write     = 1'b0;
     end
   endtask
+
   task rapb (input [7:0] a, output [7:0] d);
     begin
-      @(posedge pclk);  psel  = 1; penable  = 0; pwrite  = 0; paddr  = a;  pstrb  = 4'd0; 
-      @(posedge pclk);  penable  = 1;
-      @(posedge pclk);  d  = prdata[7:0];
-      psel  = 0; penable  = 0; 
+      @(posedge pclk);
+      avs_address    = a[7:2];
+      avs_read       = 1'b1;
+      avs_write      = 1'b0;
+      avs_byteenable = 4'b0000;
+      @(posedge pclk);
+      d = avs_readdata[7:0];
+      avs_read = 1'b0;
     end
   endtask
+
+  /*
+   * QEMU cosim (UART16550_COSIM=1): TCP -> bridge_poll_once на каждом posedge pclk.
+   * sv_uart_* выполняют короткие APB-трансферы и могут ждать @(posedge pclk).
+   * Пока транзакция не закончилась, повторный вход в bridge_poll_once блокируется
+   * в bridge_dpi.cpp (in_bridge_poll), иначе — параллельный recv/APB и зависание.
+   * После записи в THR (не DLAB) даём такты на серийный loopback.
+   * 65536 очень медленно при QEMU↔RTL cosim; 1024 обычно хватает для приёмника offline.
+   */
+  localparam integer COSIM_POST_THR_CYCLES = 1024;
+  reg dlab_cosim;
+
+  initial dlab_cosim = 1'b0;
 
   task sv_uart_write(input int offset, input longint unsigned data, input int size);
     begin
       wapb(offset[7:0], data[7:0]);
+      if (offset == 8'h0c)
+        dlab_cosim = data[7];
+      else if ((offset == 8'h00) && !dlab_cosim)
+        repeat (COSIM_POST_THR_CYCLES) @(posedge pclk);
     end
   endtask
 
@@ -50,11 +95,11 @@ module tb_apb_uart;
   reg [7:0]  rb, ls;
   integer  k, fd;
   reg cosim_mode;
-  // VCD для GTKWave: только ядро dut.u (uart_16550_core и ниже) — не весь tb (иначе сотни МБ).
+  // VCD для GTKWave: только ядро dut.u_uart.u (uart_16550_core и ниже) — не весь tb.
 `ifndef NO_VCD
   initial begin
     $dumpfile("waves_uart.vcd");
-    $dumpvars(0, dut.u);
+    $dumpvars(0, dut.u_uart.u);
   end
 `endif
   initial begin
@@ -64,10 +109,14 @@ module tb_apb_uart;
     if (fd) begin
       $fdisplay(fd, "UART self-test: started");
     end
-    presetn  = 0; psel  = 0; penable  = 0; #40  presetn  = 1;
+    avs_read = 0;
+    avs_write = 0;
+    avs_address = 6'd0;
+    presetn = 0;
+    #40 presetn = 1;
 
     if (cosim_mode) begin
-      $display("*** COSIM mode enabled: waiting QEMU transactions via DPI bridge ***");
+      $display("*** COSIM: TCP bridge -> DPI -> Avalon (как на плате) -> APB UART RTL (QEMU: UART16550_COSIM=1) ***");
       bridge_init();
       forever begin
         @(posedge pclk);

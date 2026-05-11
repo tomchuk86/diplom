@@ -4,6 +4,8 @@
 
 **Инструменты:** Verilog, симуляция в **ModelSim** (в т.ч. Altera/Quartus 13.1 ASE), лог аналогично **Quartus** (файлы `.v`).
 
+Косимуляция QEMU ↔ RTL: **TCP + bridge** (`UART16550_COSIM=1`) или **in-process DPI** (`UART16550_COSIM=dpi`), см. **`README_COSIM_UART.md`**.
+
 ---
 
 ## Размещение в QEMU
@@ -12,8 +14,9 @@
 |------|------------|
 | `rtl/uart_16550/` | Исходный RTL, подключаемый к дипломной части проекта |
 | `tests/rtl/uart_16550/` | ModelSim-тестбенч и `*.do`-скрипты |
-| `hw/char/uart_stub.c` | QEMU MMIO-модель UART 16550A / точка подключения co-sim |
-| `hw/char/uart_cosim_socket.c` | TCP-клиент для bridge на `127.0.0.1:1234` |
+| `hw/char/uart_stub.c` | QEMU MMIO UART / cosim (socket или DPI по env) |
+| `hw/char/uart_cosim_socket.c` | TCP-клиент QEMU → `127.0.0.1:1234` (bridge + RTL) |
+| `hw/char/uart_cosim_dpi.c`, `hw/char/uart_cosim_core.c` | DPI-колбэки и выбор бэкенда (socket / dpi) |
 | `hw/arm/uartarm_soc.c` | Минимальная машина `uartarm-soc` с UART по адресу `0xff210000` |
 | `hw/arm/vexpress.c` | Рабочая Buildroot-платформа `vexpress-a9`; UART добавлен по адресу `0xff210000`, как на DE1-SoC через lightweight bridge |
 
@@ -28,7 +31,7 @@
 
 | Файл | Кратко |
 |------|--------|
-| `uart_baud.v` | Бод-генератор: 16× оversampling, делитель `{DLH,DLL}` |
+| `uart_baud.v` | Бод-генератор: 16× oversampling, делитель `{DLH,DLL}` |
 | `uart_fifo.v` | Синхронный FIFO (параметр глубины) |
 | `uart_tx.v` / `uart_rx.v` | Линия UART: 5–8 бит, чётность, 1/2 stop |
 | `uart_16550_core.v` | Регистры, IRQ, MCR.4=loopback, RBR/THR через FIFO |
@@ -42,6 +45,7 @@
 | `compile.do` | `vlib` + `vlog` всех модулей |
 | `run.do` | GUI: `vsim`, `wave_add`, прогон, окно **не** закрывается (`-onfinish stop`) |
 | `run_all.do` | Всё в одной команде + `quit` (удобно для `vsim -c`) |
+| `run_cosim.do` | Сборка `bridge_dpi.so` и запуск с `+COSIM` (DPI shim без TCP, см. **README_COSIM_UART.md**) |
 | `run_modelsim_from_cmd.cmd` | Пакетный запуск из cmd (нужен путь к `vsim.exe`) |
 | `wave_add.do` | Готовый набор сигналов для окна **Wave** |
 

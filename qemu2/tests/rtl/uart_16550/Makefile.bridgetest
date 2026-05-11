@@ -1,0 +1,16 @@
+# Host-side protocol tests (no ModelSim). From this directory:
+#   make -f Makefile.bridgetest
+
+PROTO_SRC = ../../../hw/char/uart_cosim_protocol.c
+PROTO_INC = -I../../../include
+
+.PHONY: check-protocol clean
+
+check-protocol: test_cosim_protocol
+	./test_cosim_protocol
+
+test_cosim_protocol: test_cosim_protocol.c $(PROTO_SRC)
+	$(CC) -O2 -Wall -std=c99 $(PROTO_INC) test_cosim_protocol.c $(PROTO_SRC) -o $@
+
+clean:
+	rm -f test_cosim_protocol
