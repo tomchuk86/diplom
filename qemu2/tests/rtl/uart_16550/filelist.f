@@ -6,4 +6,6 @@
 ../../../rtl/uart_16550/uart_16550_core.v
 ../../../rtl/uart_16550/apb_uart_16550.v
 ../../../rtl/uart_16550/avalon_apb_uart_16550.v
+apb_master_bfm.sv
+uart16550_scoreboard.sv
 tb_apb_uart.v

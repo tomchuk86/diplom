@@ -7,15 +7,37 @@ module tb_apb_uart;
   import "DPI-C" context task bridge_poll_once();
   export "DPI-C" task sv_uart_read;
   export "DPI-C" task sv_uart_write;
+  export "DPI-C" task sv_uart_read_txn;
+  export "DPI-C" task sv_uart_write_txn;
+  export "DPI-C" task sv_bridge_reset;
 
   reg        pclk, presetn;
-  reg [5:0]  avs_address;
-  reg        avs_read, avs_write;
-  reg [31:0] avs_writedata;
-  reg [3:0]  avs_byteenable;
+  wire [5:0]  avs_address;
+  wire        avs_read, avs_write;
+  wire [31:0] avs_writedata;
+  wire [3:0]  avs_byteenable;
   wire [31:0] avs_readdata;
   wire       avs_waitrequest;
   wire       uart_txd, uart_rxd, uart_irq;
+
+  apb_master_bfm apb_bfm (
+    .clk(pclk),
+    .reset_n(presetn),
+    .avs_address(avs_address),
+    .avs_read(avs_read),
+    .avs_write(avs_write),
+    .avs_writedata(avs_writedata),
+    .avs_byteenable(avs_byteenable),
+    .avs_readdata(avs_readdata),
+    .avs_waitrequest(avs_waitrequest),
+    .irq(uart_irq)
+  );
+
+  uart16550_scoreboard sb (
+    .clk(pclk),
+    .reset_n(presetn),
+    .irq(uart_irq)
+  );
 
   avalon_apb_uart_16550 dut (
     .clk(pclk),
@@ -35,29 +57,30 @@ module tb_apb_uart;
   initial pclk = 0;
   always #5 pclk = ~pclk;
 
+  localparam integer COSIM_STATUS_OK      = 0;
+  localparam integer COSIM_STATUS_ERR     = 1;
+  localparam integer COSIM_STATUS_TIMEOUT = 2;
+  localparam integer DEFAULT_TXN_TIMEOUT  = 100000;
+
   task wapb (input [7:0] a, input [7:0] d);
+    integer status;
     begin
-      @(posedge pclk);
-      avs_address   = a[7:2];
-      avs_writedata = {24'd0, d};
-      avs_byteenable = 4'b0001;
-      avs_write     = 1'b1;
-      avs_read      = 1'b0;
-      @(posedge pclk);
-      avs_write     = 1'b0;
+      apb_bfm.write8(a, d, DEFAULT_TXN_TIMEOUT, status);
+      if (status == COSIM_STATUS_OK)
+        sb.observe_write(0, {24'd0, a}, {56'd0, d}, 1);
+      else
+        $display("FAIL: APB write timeout/status=%0d offset=0x%02h", status, a);
     end
   endtask
 
   task rapb (input [7:0] a, output [7:0] d);
+    integer status;
     begin
-      @(posedge pclk);
-      avs_address    = a[7:2];
-      avs_read       = 1'b1;
-      avs_write      = 1'b0;
-      avs_byteenable = 4'b0000;
-      @(posedge pclk);
-      d = avs_readdata[7:0];
-      avs_read = 1'b0;
+      apb_bfm.read8(a, d, DEFAULT_TXN_TIMEOUT, status);
+      if (status == COSIM_STATUS_OK)
+        sb.observe_read(0, {24'd0, a}, {56'd0, d}, 1);
+      else
+        $display("FAIL: APB read timeout/status=%0d offset=0x%02h", status, a);
     end
   endtask
 
@@ -74,21 +97,67 @@ module tb_apb_uart;
 
   initial dlab_cosim = 1'b0;
 
-  task sv_uart_write(input int offset, input longint unsigned data, input int size);
+  task sv_uart_write_txn(input int txn_id, input int offset,
+                         input longint unsigned data, input int size,
+                         input int timeout_cycles,
+                         output int status);
     begin
-      wapb(offset[7:0], data[7:0]);
-      if (offset == 8'h0c)
-        dlab_cosim = data[7];
-      else if ((offset == 8'h00) && !dlab_cosim)
-        repeat (COSIM_POST_THR_CYCLES) @(posedge pclk);
+      if ((size != 1) && (size != 2) && (size != 4)) begin
+        status = COSIM_STATUS_ERR;
+      end else begin
+        apb_bfm.write_access(offset[7:0], data[31:0], size,
+                             timeout_cycles, status);
+        if (status == COSIM_STATUS_OK) begin
+          sb.observe_write(txn_id, offset, data, size);
+          if (offset == 32'h0000000c)
+            dlab_cosim = data[7];
+          else if ((offset == 32'h00000000) && !dlab_cosim)
+            repeat (COSIM_POST_THR_CYCLES) @(posedge pclk);
+        end
+      end
+    end
+  endtask
+
+  task sv_uart_read_txn(input int txn_id, input int offset, input int size,
+                        input int timeout_cycles,
+                        output longint unsigned data, output int status);
+    reg [31:0] d32;
+    begin
+      data = 0;
+      if ((size != 1) && (size != 2) && (size != 4)) begin
+        status = COSIM_STATUS_ERR;
+      end else begin
+        apb_bfm.read_access(offset[7:0], d32, size, timeout_cycles, status);
+        data = {32'd0, d32};
+        if (status == COSIM_STATUS_OK)
+          sb.observe_read(txn_id, offset, data, size);
+      end
+    end
+  endtask
+
+  task sv_uart_write(input int offset, input longint unsigned data, input int size);
+    integer status;
+    begin
+      sv_uart_write_txn(0, offset, data, size, DEFAULT_TXN_TIMEOUT, status);
     end
   endtask
 
   task sv_uart_read(input int offset, input int size, output longint unsigned data);
-    reg [7:0] d8;
+    integer status;
     begin
-      rapb(offset[7:0], d8);
-      data = d8;
+      sv_uart_read_txn(0, offset, size, DEFAULT_TXN_TIMEOUT, data, status);
+    end
+  endtask
+
+  task sv_bridge_reset;
+    begin
+      apb_bfm.idle_bus();
+      presetn = 1'b0;
+      repeat (5) @(posedge pclk);
+      presetn = 1'b1;
+      repeat (2) @(posedge pclk);
+      dlab_cosim = 1'b0;
+      sb.reset_model();
     end
   endtask
 
@@ -106,14 +175,15 @@ module tb_apb_uart;
     cosim_mode = $test$plusargs("COSIM");
     $display("*** tb_apb_uart: старт (результат -> sim/ sim_result.txt) ***");
     fd = $fopen("sim_result.txt");
-    if (fd) begin
+    if (fd != 0) begin
       $fdisplay(fd, "UART self-test: started");
     end
-    avs_read = 0;
-    avs_write = 0;
-    avs_address = 6'd0;
+    apb_bfm.init();
+    sb.reset_model();
     presetn = 0;
     #40 presetn = 1;
+    repeat (2) @(posedge pclk);
+    sb.reset_model();
 
     if (cosim_mode) begin
       $display("*** COSIM: TCP bridge -> DPI -> Avalon (как на плате) -> APB UART RTL (QEMU: UART16550_COSIM=1) ***");
@@ -136,19 +206,21 @@ module tb_apb_uart;
     rapb(0, rb);    // RBR
     if (rb  !== 8'hA5)  begin
       $display("FAIL: RBR= %h (expected A5)", rb);
-      if (fd) begin
+      if (fd != 0) begin
         $fdisplay(fd, "RESULT=FAIL RBR= %h", rb);
         $fdisplay(fd, "END");
         $fclose(fd);
       end
     end else begin
       $display("OK:   RBR= %h (loopback 8'hA5)", rb);
-      if (fd) begin
+      if (fd != 0) begin
         $fdisplay(fd, "RESULT=PASS RBR= %h", rb);
         $fdisplay(fd, "END");
         $fclose(fd);
       end
     end
+    apb_bfm.report();
+    sb.report();
     $display("*** sim_result.txt обновлён. GTKWave: File -> Open waves_uart.vcd (в папке sim) ***");
     $finish(0);
   end

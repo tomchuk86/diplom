@@ -11,7 +11,7 @@
 | `UART16550_COSIM` | Режим |
 |-------------------|--------|
 | не задано / `0` | Локальная модель UART только в QEMU (cosim выключен). |
-| `1`, `socket` или другое ≠ `dpi` | QEMU подключается к **`127.0.0.1:1234`** и обменивается строками `W`/`R` с ModelSim bridge. |
+| `1`, `socket` или другое ≠ `dpi` | QEMU подключается к **`127.0.0.1:1234`** и обменивается transaction-строками `TXN`/`RSP` с ModelSim bridge. |
 | `dpi` | Колбэки DPI в том же процессе; если ops не заданы — автоматический fallback на встроенную модель. |
 
 **`UART_COSIM_LOG`**: `0` — тихо; `1` — по умолчанию (меньше логов по чтению LSR `0x14`); `2` — все смещения. Влияет на QEMU (`[COSIM]`) и на bridge (`[BRIDGE]`).
@@ -70,7 +70,17 @@ cd /home/vboxuser/diplom && UART16550_COSIM=1 UART_COSIM_LOG=1 \
 
 В терминале A должно появиться **`[BRIDGE] QEMU connected`**, в B — **`[COSIM socket] connected to 127.0.0.1:1234`**.
 
-Гость использует MMIO по **0xff210000**; при включённом socket‑режиме транзакции обслуживает **RTL** через bridge.
+Гость использует MMIO по **0xff210000**; при включённом socket‑режиме транзакции обслуживает **RTL** через bridge. Каждая MMIO-операция получает transaction id и ответ `OK`/`ERR`/`TIMEOUT`, поэтому ошибки bridge/APB видны на стороне QEMU, а не превращаются в молчаливое зависание.
+
+Формат расширенного протокола:
+
+```text
+TXN <id> W 0x<offset> 0x<data> <size> <timeout_cycles>
+TXN <id> R 0x<offset> <size> <timeout_cycles>
+TXN <id> PING <timeout_cycles>
+TXN <id> RESET <timeout_cycles>
+RSP <id> OK|ERR|TIMEOUT 0x<value>
+```
 
 ### Шаг 3 — в госте: модуль и тест
 
@@ -136,12 +146,14 @@ cd /home/vboxuser/diplom && UART16550_COSIM=dpi bash qemu2/scripts/run_uart16550
 
 | Путь | Роль |
 |------|------|
-| `hw/char/uart_cosim_socket.c` | TCP-клиент, протокол строк |
+| `hw/char/uart_cosim_socket.c` | TCP-клиент, transaction id, ожидание `RSP` |
 | `hw/char/uart_cosim_dpi.c` | Колбэки DPI |
 | `hw/char/uart_cosim_core.c` | Выбор socket / dpi по env |
 | `hw/char/uart_stub.c` | MMIO устройство; fallback ops только для **`dpi`** |
-| `tests/rtl/uart_16550/bridge_dpi.cpp` | Сервер `:1234`, вызов **`sv_uart_*`** |
+| `tests/rtl/uart_16550/bridge_dpi.cpp` | Сервер `:1234`, очередь транзакций, вызов **`sv_uart_*`** |
 | `tests/rtl/uart_16550/run_cosim.do` | Сборка **`bridge_dpi.so`** + **`vsim`** |
 | `tests/rtl/uart_16550/tb_apb_uart.v` | DPI + **`bridge_poll_once`** на каждом такте в режиме COSIM |
+| `tests/rtl/uart_16550/apb_master_bfm.sv` | APB/Avalon BFM с таймаутами и операциями 1/2/4 байта |
+| `tests/rtl/uart_16550/uart16550_scoreboard.sv` | Scoreboard, регистровая модель UART, проверки и покрытие регистров |
 
 Дополнительно: **`README_uart16550_rtl.md`**, **`UART16550_QEMU_INTERFACE.txt`**.
