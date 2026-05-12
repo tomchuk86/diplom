@@ -1,3 +1,4 @@
+`timescale 1ns/1ps
 // Синхронный FIFO: для RX/TX буферов 16550.
 module uart_fifo #(
   parameter DEPTH  = 16,

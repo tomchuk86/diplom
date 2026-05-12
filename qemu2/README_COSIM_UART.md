@@ -46,6 +46,24 @@ cd /home/vboxuser/diplom/qemu2/build
 ninja qemu-system-arm
 ```
 
+### Сборка всего стека (QEMU + гостевой модуль/тест + тест протокола)
+
+Из корня репозитория. При необходимости задайте `BR_HOST`, `BR_KDIR`, `BR_CROSS` (как в `drivers/uart16550_extended/Makefile`).
+
+```bash
+cd /home/vboxuser/diplom && bash qemu2/scripts/build_uart16550_stack.sh
+```
+
+### Запуск QEMU с cosim к RTL (переменные окружения выставляются в скрипте)
+
+После того, как ModelSim в `run_cosim.do` ждёт подключения на `127.0.0.1:1234`:
+
+```bash
+cd /home/vboxuser/diplom && bash qemu2/scripts/run_uart16550_cosim_full.sh
+```
+
+Переопределение: `UART16550_COSIM=socket UART_COSIM_LOG=2 bash qemu2/scripts/run_uart16550_cosim_full.sh`.
+
 ---
 
 ## Запуск полной косимуляции (порядок обязателен)

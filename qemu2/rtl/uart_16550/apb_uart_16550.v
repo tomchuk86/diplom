@@ -14,21 +14,29 @@ module apb_uart_16550 #(
   output wire                pslverr,
   output wire                uart_txd, input wire uart_rxd, output wire uart_irq
 );
-  // Word index: 0..7  => registers @ 0x00..0x1C; 8..11 => demo ext @ 0x20..0x2C
+  // Word index: 0..7 regs; 8..11 demo; 12..13 scratch; 14..15 ID; 16..19 DMA; 20..39 mmio bucket.
   wire [5:0] widx  = paddr[7:2];
+  wire        acc_ok = widx <= 6'd39;
   wire        core  = widx < 6'd8;
-  wire        ext   = (widx >= 6'd8) & (widx <= 6'd11);
-  wire  we  = psel & penable & pwrite  & pstrb[0] & (core | ext);
-  wire  re  = psel & penable & ~pwrite  & core;
+  wire        demo_ext = (widx >= 6'd8) & (widx <= 6'd11);
+  wire        scratch_ext = (widx == 6'd12) | (widx == 6'd13);
+  wire        dma_ext = (widx >= 6'd16) & (widx <= 6'd19);
+  wire        bucket_ext = (widx >= 6'd20) & (widx <= 6'd39);
+  wire        ext   = demo_ext | scratch_ext | dma_ext | bucket_ext;
+  wire        we_ok = core ? pstrb[0]
+                          : (scratch_ext | dma_ext | bucket_ext) ? (|pstrb) : pstrb[0];
+  wire  we  = psel & penable & pwrite  & we_ok & (core | ext) & acc_ok;
+  wire  re  = psel & penable & ~pwrite  & core & acc_ok;
   wire [2:0] adr  = widx[2:0];
   wire [7:0] rd;
   wire [31:0] rdata32;
   uart_16550_core u (
     .clk(pclk), .rst_n(presetn), .rxd_in(uart_rxd), .txd_out(uart_txd), .intr(uart_irq),
-    .reg_adr(adr), .widx(widx), .reg_we(we), .reg_re(re), .wdata8(pwdata[7:0]),
+    .reg_adr(adr), .widx(widx), .reg_we(we), .reg_re(re),
+    .wdata8(pwdata[7:0]), .wdata32(pwdata),
     .rdata8(rd), .rdata32(rdata32)
   );
-  assign prdata  = rdata32;
+  assign prdata  = acc_ok ? rdata32 : 32'd0;
   assign pready  = psel & penable;
-  assign pslverr  = 1'b0;
+  assign pslverr = psel & penable & ~acc_ok;
 endmodule

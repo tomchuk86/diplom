@@ -1,3 +1,4 @@
+`timescale 1ns/1ps
 // Генератор таймингов UART: 16x оверсэмплинг (как в 16550A).
 // f_baud = f_clk / (16 * {DLH, DLL}), при 0 в делителе используется 1.
 module uart_baud #(

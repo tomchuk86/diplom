@@ -161,47 +161,47 @@ static bool trans_BL_suffix(DisasContext *ctx, arg_BL_suffix *a);
 
 static void disas_t16_extract_addsub_2h(DisasContext *ctx, arg_s_rrr_shi *a, uint16_t insn)
 {
-    a->shim = 0;
     a->rd = deposit32(extract32(insn, 0, 3), 3, 29, extract32(insn, 7, 1));
-    a->shty = 0;
     a->rm = extract32(insn, 3, 4);
+    a->shim = 0;
     a->rn = deposit32(extract32(insn, 0, 3), 3, 29, extract32(insn, 7, 1));
+    a->shty = 0;
 }
 
 static void disas_t16_extract_addsub_2i(DisasContext *ctx, arg_s_rri_rot *a, uint16_t insn)
 {
-    a->rd = extract32(insn, 0, 3);
-    a->imm = extract32(insn, 6, 3);
-    a->rn = extract32(insn, 3, 3);
-    a->s = t16_setflags(ctx);
     a->rot = 0;
+    a->rd = extract32(insn, 0, 3);
+    a->rn = extract32(insn, 3, 3);
+    a->imm = extract32(insn, 6, 3);
+    a->s = t16_setflags(ctx);
 }
 
 static void disas_t16_extract_addsub_3(DisasContext *ctx, arg_s_rrr_shi *a, uint16_t insn)
 {
-    a->shim = 0;
     a->rd = extract32(insn, 0, 3);
-    a->shty = 0;
     a->rm = extract32(insn, 6, 3);
+    a->shim = 0;
     a->rn = extract32(insn, 3, 3);
     a->s = t16_setflags(ctx);
+    a->shty = 0;
 }
 
 static void disas_t16_extract_addsub_sp_i(DisasContext *ctx, arg_s_rri_rot *a, uint16_t insn)
 {
-    a->rd = 13;
-    a->imm = times_4(ctx, extract32(insn, 0, 7));
-    a->rn = 13;
-    a->s = 0;
     a->rot = 0;
+    a->rd = 13;
+    a->rn = 13;
+    a->imm = times_4(ctx, extract32(insn, 0, 7));
+    a->s = 0;
 }
 
 static void disas_t16_extract_arith_1i(DisasContext *ctx, arg_s_rri_rot *a, uint16_t insn)
 {
     a->rn = extract32(insn, 8, 3);
-    a->rd = extract32(insn, 8, 3);
-    a->rot = 0;
     a->imm = extract32(insn, 0, 8);
+    a->rot = 0;
+    a->rd = extract32(insn, 8, 3);
 }
 
 static void disas_t16_extract_branchr(DisasContext *ctx, arg_r *a, uint16_t insn)
@@ -211,17 +211,17 @@ static void disas_t16_extract_branchr(DisasContext *ctx, arg_r *a, uint16_t insn
 
 static void disas_t16_extract_disas_t16_Fmt_10(DisasContext *ctx, arg_ri *a, uint16_t insn)
 {
-    a->rd = extract32(insn, 8, 3);
     a->imm = times_4(ctx, extract32(insn, 0, 8));
+    a->rd = extract32(insn, 8, 3);
 }
 
 static void disas_t16_extract_disas_t16_Fmt_11(DisasContext *ctx, arg_s_rri_rot *a, uint16_t insn)
 {
-    a->rd = extract32(insn, 8, 3);
-    a->imm = times_4(ctx, extract32(insn, 0, 8));
-    a->rn = 13;
-    a->s = 0;
     a->rot = 0;
+    a->rd = extract32(insn, 8, 3);
+    a->rn = 13;
+    a->imm = times_4(ctx, extract32(insn, 0, 8));
+    a->s = 0;
 }
 
 static void disas_t16_extract_disas_t16_Fmt_21(DisasContext *ctx, arg_setend *a, uint16_t insn)
@@ -231,18 +231,18 @@ static void disas_t16_extract_disas_t16_Fmt_21(DisasContext *ctx, arg_setend *a,
 
 static void disas_t16_extract_disas_t16_Fmt_22(DisasContext *ctx, arg_cps *a, uint16_t insn)
 {
+    a->F = extract32(insn, 0, 1);
+    a->M = 0;
     a->I = extract32(insn, 1, 1);
+    a->A = extract32(insn, 2, 1);
     a->mode = 0;
     a->imod = plus_2(ctx, extract32(insn, 4, 1));
-    a->A = extract32(insn, 2, 1);
-    a->M = 0;
-    a->F = extract32(insn, 0, 1);
 }
 
 static void disas_t16_extract_disas_t16_Fmt_23(DisasContext *ctx, arg_disas_t1616 *a, uint16_t insn)
 {
-    a->F = extract32(insn, 0, 1);
     a->I = extract32(insn, 1, 1);
+    a->F = extract32(insn, 0, 1);
     a->im = extract32(insn, 4, 1);
 }
 
@@ -267,38 +267,38 @@ static void disas_t16_extract_disas_t16_Fmt_28(DisasContext *ctx, arg_i *a, uint
 
 static void disas_t16_extract_disas_t16_Fmt_29(DisasContext *ctx, arg_disas_t1618 *a, uint16_t insn)
 {
-    a->rn = extract32(insn, 0, 3);
     a->imm = times_2(ctx, deposit32(extract32(insn, 3, 5), 5, 27, extract32(insn, 9, 1)));
     a->nz = extract32(insn, 11, 1);
+    a->rn = extract32(insn, 0, 3);
 }
 
 static void disas_t16_extract_disas_t16_Fmt_3(DisasContext *ctx, arg_s_rri_rot *a, uint16_t insn)
 {
-    a->rd = extract32(insn, 0, 3);
-    a->imm = 0;
-    a->rn = extract32(insn, 3, 3);
-    a->s = t16_setflags(ctx);
     a->rot = 0;
+    a->rd = extract32(insn, 0, 3);
+    a->rn = extract32(insn, 3, 3);
+    a->imm = 0;
+    a->s = t16_setflags(ctx);
 }
 
 static void disas_t16_extract_disas_t16_Fmt_30(DisasContext *ctx, arg_ldst_block *a, uint16_t insn)
 {
-    a->b = 1;
-    a->u = 0;
-    a->w = 1;
     a->list = t16_push_list(ctx, extract32(insn, 0, 9));
+    a->w = 1;
+    a->u = 0;
     a->rn = 13;
     a->i = 0;
+    a->b = 1;
 }
 
 static void disas_t16_extract_disas_t16_Fmt_31(DisasContext *ctx, arg_ldst_block *a, uint16_t insn)
 {
-    a->b = 0;
-    a->u = 0;
-    a->w = 1;
     a->list = t16_pop_list(ctx, extract32(insn, 0, 9));
+    a->w = 1;
+    a->u = 0;
     a->rn = 13;
     a->i = 1;
+    a->b = 0;
 }
 
 static void disas_t16_extract_disas_t16_Fmt_32(DisasContext *ctx, arg_ci *a, uint16_t insn)
@@ -325,95 +325,95 @@ static void disas_t16_extract_disas_t16_Fmt_35(DisasContext *ctx, arg_i *a, uint
 static void disas_t16_extract_disas_t16_Fmt_4(DisasContext *ctx, arg_s_rrrr *a, uint16_t insn)
 {
     a->rd = extract32(insn, 0, 3);
-    a->ra = 0;
     a->rm = extract32(insn, 0, 3);
     a->rn = extract32(insn, 3, 3);
+    a->ra = 0;
     a->s = t16_setflags(ctx);
 }
 
 static void disas_t16_extract_extend(DisasContext *ctx, arg_rrr_rot *a, uint16_t insn)
 {
     a->rm = extract32(insn, 3, 3);
-    a->rd = extract32(insn, 0, 3);
-    a->rot = 0;
     a->rn = 15;
+    a->rot = 0;
+    a->rd = extract32(insn, 0, 3);
 }
 
 static void disas_t16_extract_ldst_ri_1(DisasContext *ctx, arg_ldst_ri *a, uint16_t insn)
 {
-    a->p = 1;
-    a->u = 1;
-    a->imm = extract32(insn, 6, 5);
     a->w = 0;
     a->rt = extract32(insn, 0, 3);
+    a->p = 1;
+    a->u = 1;
     a->rn = extract32(insn, 3, 3);
+    a->imm = extract32(insn, 6, 5);
 }
 
 static void disas_t16_extract_ldst_ri_2(DisasContext *ctx, arg_ldst_ri *a, uint16_t insn)
 {
-    a->p = 1;
-    a->u = 1;
-    a->imm = times_2(ctx, extract32(insn, 6, 5));
     a->w = 0;
     a->rt = extract32(insn, 0, 3);
+    a->p = 1;
+    a->u = 1;
     a->rn = extract32(insn, 3, 3);
+    a->imm = times_2(ctx, extract32(insn, 6, 5));
 }
 
 static void disas_t16_extract_ldst_ri_4(DisasContext *ctx, arg_ldst_ri *a, uint16_t insn)
 {
-    a->p = 1;
-    a->u = 1;
-    a->imm = times_4(ctx, extract32(insn, 6, 5));
     a->w = 0;
     a->rt = extract32(insn, 0, 3);
+    a->p = 1;
+    a->u = 1;
     a->rn = extract32(insn, 3, 3);
+    a->imm = times_4(ctx, extract32(insn, 6, 5));
 }
 
 static void disas_t16_extract_ldst_rr(DisasContext *ctx, arg_ldst_rr *a, uint16_t insn)
 {
-    a->p = 1;
     a->shtype = 0;
+    a->w = 0;
+    a->rt = extract32(insn, 0, 3);
+    a->rm = extract32(insn, 6, 3);
+    a->p = 1;
     a->u = 1;
     a->shimm = 0;
-    a->w = 0;
-    a->rm = extract32(insn, 6, 3);
-    a->rt = extract32(insn, 0, 3);
     a->rn = extract32(insn, 3, 3);
 }
 
 static void disas_t16_extract_ldst_spec_i(DisasContext *ctx, arg_ldst_ri *a, uint16_t insn)
 {
+    a->w = 0;
+    a->rt = extract32(insn, 8, 3);
     a->p = 1;
     a->u = 1;
     a->imm = times_4(ctx, extract32(insn, 0, 8));
-    a->w = 0;
-    a->rt = extract32(insn, 8, 3);
 }
 
 static void disas_t16_extract_ldstm(DisasContext *ctx, arg_ldst_block *a, uint16_t insn)
 {
-    a->b = 0;
-    a->u = 0;
     a->list = extract32(insn, 0, 8);
     a->w = 1;
+    a->u = 0;
     a->rn = extract32(insn, 8, 3);
     a->i = 1;
+    a->b = 0;
 }
 
 static void disas_t16_extract_lll_noshr(DisasContext *ctx, arg_s_rrr_shi *a, uint16_t insn)
 {
-    a->shim = 0;
     a->rd = extract32(insn, 0, 3);
-    a->shty = 0;
     a->rm = extract32(insn, 3, 3);
+    a->shim = 0;
     a->rn = extract32(insn, 0, 3);
     a->s = t16_setflags(ctx);
+    a->shty = 0;
 }
 
 static void disas_t16_extract_lxl_shr(DisasContext *ctx, arg_s_rrr_shr *a, uint16_t insn)
 {
-    a->rd = extract32(insn, 0, 3);
     a->rs = extract32(insn, 3, 3);
+    a->rd = extract32(insn, 0, 3);
     a->rm = extract32(insn, 0, 3);
     a->rn = 0;
     a->s = t16_setflags(ctx);
@@ -427,8 +427,8 @@ static void disas_t16_extract_rdm(DisasContext *ctx, arg_rr *a, uint16_t insn)
 
 static void disas_t16_extract_shift_i(DisasContext *ctx, arg_s_rrr_shi *a, uint16_t insn)
 {
-    a->shim = extract32(insn, 6, 5);
     a->rd = extract32(insn, 0, 3);
+    a->shim = extract32(insn, 6, 5);
     a->rm = extract32(insn, 3, 3);
     a->rn = extract32(insn, 0, 3);
     a->s = t16_setflags(ctx);
@@ -436,12 +436,12 @@ static void disas_t16_extract_shift_i(DisasContext *ctx, arg_s_rrr_shi *a, uint1
 
 static void disas_t16_extract_xll_noshr(DisasContext *ctx, arg_s_rrr_shi *a, uint16_t insn)
 {
-    a->shim = 0;
     a->rd = 0;
-    a->shty = 0;
     a->rm = extract32(insn, 3, 3);
+    a->shim = 0;
     a->rn = extract32(insn, 0, 3);
     a->s = 1;
+    a->shty = 0;
 }
 
 static bool disas_t16(DisasContext *ctx, uint16_t insn)

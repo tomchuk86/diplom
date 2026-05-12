@@ -1,5 +1,6 @@
 // UART приём, 16x. Фазы: start, data(5–8), опц. чётность, 1/2 stop.
 `timescale 1ns/1ps
+`timescale 1ns/1ps
 module uart_rx (
   input  wire        clk,
   input  wire        rst_n,

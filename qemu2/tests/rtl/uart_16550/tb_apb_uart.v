@@ -18,7 +18,7 @@ module tb_apb_uart;
   wire [3:0]  avs_byteenable;
   wire [31:0] avs_readdata;
   wire       avs_waitrequest;
-  wire       uart_txd, uart_rxd, uart_irq;
+  wire       uart_txd, uart_rxd, uart_irq, uart_pslverr;
 
   apb_master_bfm apb_bfm (
     .clk(pclk),
@@ -49,6 +49,7 @@ module tb_apb_uart;
     .avs_byteenable(avs_byteenable),
     .avs_readdata(avs_readdata),
     .avs_waitrequest(avs_waitrequest),
+    .uart_pslverr(uart_pslverr),
     .irq(uart_irq),
     .uart_txd(uart_txd),
     .uart_rxd(uart_rxd)

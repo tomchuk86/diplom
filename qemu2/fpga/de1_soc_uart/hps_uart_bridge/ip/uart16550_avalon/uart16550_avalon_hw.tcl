@@ -15,6 +15,13 @@ set_fileset_property QUARTUS_SYNTH TOP_LEVEL avalon_apb_uart_16550
 add_fileset_file ../../../../../rtl/uart_16550/avalon_apb_uart_16550.v VERILOG PATH ../../../../../rtl/uart_16550/avalon_apb_uart_16550.v TOP_LEVEL_FILE
 add_fileset_file ../../../../../rtl/uart_16550/apb_uart_16550.v VERILOG PATH ../../../../../rtl/uart_16550/apb_uart_16550.v
 add_fileset_file ../../../../../rtl/uart_16550/uart_16550_core.v VERILOG PATH ../../../../../rtl/uart_16550/uart_16550_core.v
+add_fileset_file ../../../../../rtl/uart_16550/uart_16550_dma_port.v VERILOG PATH ../../../../../rtl/uart_16550/uart_16550_dma_port.v
+add_fileset_file ../../../../../rtl/uart_16550/uart_16550_line_hist.v VERILOG PATH ../../../../../rtl/uart_16550/uart_16550_line_hist.v
+add_fileset_file ../../../../../rtl/uart_16550/uart_16550_rx_aux.v VERILOG PATH ../../../../../rtl/uart_16550/uart_16550_rx_aux.v
+add_fileset_file ../../../../../rtl/uart_16550/uart_16550_modem.v VERILOG PATH ../../../../../rtl/uart_16550/uart_16550_modem.v
+add_fileset_file ../../../../../rtl/uart_16550/uart_16550_mmio_bucket.v VERILOG PATH ../../../../../rtl/uart_16550/uart_16550_mmio_bucket.v
+add_fileset_file ../../../../../rtl/uart_16550/uart_16550_csr_decode.v VERILOG PATH ../../../../../rtl/uart_16550/uart_16550_csr_decode.v
+add_fileset_file ../../../../../rtl/uart_16550/uart_sync_2ff.v VERILOG PATH ../../../../../rtl/uart_16550/uart_sync_2ff.v
 add_fileset_file ../../../../../rtl/uart_16550/uart_baud.v VERILOG PATH ../../../../../rtl/uart_16550/uart_baud.v
 add_fileset_file ../../../../../rtl/uart_16550/uart_fifo.v VERILOG PATH ../../../../../rtl/uart_16550/uart_fifo.v
 add_fileset_file ../../../../../rtl/uart_16550/uart_rx.v VERILOG PATH ../../../../../rtl/uart_16550/uart_rx.v
@@ -75,3 +82,4 @@ set_interface_property uart associatedReset reset
 set_interface_property uart ENABLED true
 add_interface_port uart uart_txd export Output 1
 add_interface_port uart uart_rxd export Input 1
+add_interface_port uart uart_pslverr export Output 1

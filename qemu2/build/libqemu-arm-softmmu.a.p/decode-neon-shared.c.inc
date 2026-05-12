@@ -100,115 +100,115 @@ static bool trans_VFMA_b16_scal(DisasContext *ctx, arg_VFMA_b16_scal *a);
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_0(DisasContext *ctx, arg_disas_neon_shared0 *a, uint32_t insn)
 {
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
-    a->q = extract32(insn, 6, 1);
-    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->size = plus_1(ctx, extract32(insn, 20, 1));
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
+    a->q = extract32(insn, 6, 1);
     a->rot = extract32(insn, 23, 2);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_1(DisasContext *ctx, arg_disas_neon_shared0 *a, uint32_t insn)
 {
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
-    a->q = extract32(insn, 6, 1);
-    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->size = plus_1(ctx, extract32(insn, 20, 1));
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
+    a->q = extract32(insn, 6, 1);
     a->rot = extract32(insn, 24, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_10(DisasContext *ctx, arg_disas_neon_shared6 *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 0, 3);
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->q = 1;
+    a->s = extract32(insn, 20, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->rm = extract32(insn, 0, 3);
     a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->index = deposit32(extract32(insn, 3, 1), 1, 31, extract32(insn, 5, 1));
-    a->s = extract32(insn, 20, 1);
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_11(DisasContext *ctx, arg_disas_neon_shared5 *a, uint32_t insn)
 {
     a->vm = extract32(insn, 0, 3);
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->q = extract32(insn, 6, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->index = deposit32(extract32(insn, 3, 1), 1, 31, extract32(insn, 5, 1));
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_2(DisasContext *ctx, arg_disas_neon_shared1 *a, uint32_t insn)
 {
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
     a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
-    a->q = extract32(insn, 6, 1);
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
     a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
+    a->q = extract32(insn, 6, 1);
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_3(DisasContext *ctx, arg_disas_neon_shared2 *a, uint32_t insn)
 {
-    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->q = 0;
-    a->vn = deposit32(extract32(insn, 7, 1), 1, 31, extract32(insn, 16, 4));
+    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
     a->s = extract32(insn, 23, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->vn = deposit32(extract32(insn, 7, 1), 1, 31, extract32(insn, 16, 4));
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_4(DisasContext *ctx, arg_disas_neon_shared2 *a, uint32_t insn)
 {
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->q = 1;
-    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
     a->s = extract32(insn, 23, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_5(DisasContext *ctx, arg_disas_neon_shared3 *a, uint32_t insn)
 {
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
     a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_6(DisasContext *ctx, arg_disas_neon_shared4 *a, uint32_t insn)
 {
-    a->vm = extract32(insn, 0, 4);
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
-    a->q = extract32(insn, 6, 1);
-    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->size = 1;
+    a->vm = extract32(insn, 0, 4);
+    a->q = extract32(insn, 6, 1);
     a->rot = extract32(insn, 20, 2);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->index = extract32(insn, 5, 1);
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_7(DisasContext *ctx, arg_disas_neon_shared4 *a, uint32_t insn)
 {
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
-    a->q = extract32(insn, 6, 1);
-    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->size = 2;
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
+    a->q = extract32(insn, 6, 1);
     a->rot = extract32(insn, 20, 2);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->index = 0;
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_8(DisasContext *ctx, arg_disas_neon_shared5 *a, uint32_t insn)
 {
     a->vm = extract32(insn, 0, 4);
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->q = extract32(insn, 6, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->index = extract32(insn, 5, 1);
 }
 
 static void disas_neon_shared_extract_disas_neon_shared_Fmt_9(DisasContext *ctx, arg_disas_neon_shared6 *a, uint32_t insn)
 {
-    a->rm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 3));
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->q = 0;
+    a->s = extract32(insn, 20, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->rm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 3));
     a->vn = deposit32(extract32(insn, 7, 1), 1, 31, extract32(insn, 16, 4));
     a->index = extract32(insn, 3, 1);
-    a->s = extract32(insn, 20, 1);
 }
 
 bool disas_neon_shared(DisasContext *ctx, uint32_t insn)

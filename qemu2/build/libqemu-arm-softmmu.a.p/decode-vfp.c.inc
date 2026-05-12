@@ -301,27 +301,27 @@ static bool trans_VCVT_dp_int(DisasContext *ctx, arg_VCVT_dp_int *a);
 
 static void disas_vfp_extract_disas_vfp_Fmt_10(DisasContext *ctx, arg_disas_vfp3 *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->index = deposit32(extract32(insn, 6, 1), 1, 31, extract32(insn, 21, 1));
-    a->size = 1;
     a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
+    a->size = 1;
+    a->index = deposit32(extract32(insn, 6, 1), 1, 31, extract32(insn, 21, 1));
+    a->rt = extract32(insn, 12, 4);
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_11(DisasContext *ctx, arg_disas_vfp3 *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->index = extract32(insn, 21, 1);
-    a->size = 2;
     a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
+    a->size = 2;
+    a->index = extract32(insn, 21, 1);
+    a->rt = extract32(insn, 12, 4);
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_12(DisasContext *ctx, arg_disas_vfp4 *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->e = extract32(insn, 5, 1);
-    a->b = extract32(insn, 22, 1);
-    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->q = extract32(insn, 21, 1);
+    a->b = extract32(insn, 22, 1);
+    a->e = extract32(insn, 5, 1);
+    a->rt = extract32(insn, 12, 4);
+    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_13(DisasContext *ctx, arg_disas_vfp5 *a, uint32_t insn)
@@ -333,87 +333,87 @@ static void disas_vfp_extract_disas_vfp_Fmt_13(DisasContext *ctx, arg_disas_vfp5
 
 static void disas_vfp_extract_disas_vfp_Fmt_14(DisasContext *ctx, arg_disas_vfp6 *a, uint32_t insn)
 {
+    a->vn = deposit32(extract32(insn, 7, 1), 1, 31, extract32(insn, 16, 4));
     a->rt = extract32(insn, 12, 4);
     a->l = extract32(insn, 20, 1);
-    a->vn = deposit32(extract32(insn, 7, 1), 1, 31, extract32(insn, 16, 4));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_15(DisasContext *ctx, arg_disas_vfp7 *a, uint32_t insn)
 {
+    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
+    a->rt2 = extract32(insn, 16, 4);
     a->op = extract32(insn, 20, 1);
     a->rt = extract32(insn, 12, 4);
-    a->rt2 = extract32(insn, 16, 4);
-    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_16(DisasContext *ctx, arg_disas_vfp7 *a, uint32_t insn)
 {
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
+    a->rt2 = extract32(insn, 16, 4);
     a->op = extract32(insn, 20, 1);
     a->rt = extract32(insn, 12, 4);
-    a->rt2 = extract32(insn, 16, 4);
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_17(DisasContext *ctx, arg_disas_vfp8 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->l = extract32(insn, 20, 1);
-    a->u = extract32(insn, 23, 1);
     a->imm = extract32(insn, 0, 8);
     a->rn = extract32(insn, 16, 4);
+    a->u = extract32(insn, 23, 1);
+    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_18(DisasContext *ctx, arg_disas_vfp8 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->l = extract32(insn, 20, 1);
-    a->u = extract32(insn, 23, 1);
     a->imm = extract32(insn, 0, 8);
     a->rn = extract32(insn, 16, 4);
+    a->u = extract32(insn, 23, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_19(DisasContext *ctx, arg_disas_vfp9 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->l = extract32(insn, 20, 1);
-    a->u = 1;
-    a->w = extract32(insn, 21, 1);
     a->p = 0;
     a->imm = extract32(insn, 0, 8);
     a->rn = extract32(insn, 16, 4);
+    a->u = 1;
+    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
+    a->w = extract32(insn, 21, 1);
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_20(DisasContext *ctx, arg_disas_vfp9 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->l = extract32(insn, 20, 1);
-    a->u = 1;
-    a->w = extract32(insn, 21, 1);
     a->p = 0;
     a->imm = extract32(insn, 0, 8);
     a->rn = extract32(insn, 16, 4);
+    a->u = 1;
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->w = extract32(insn, 21, 1);
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_21(DisasContext *ctx, arg_disas_vfp9 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->l = extract32(insn, 20, 1);
-    a->u = 0;
-    a->w = 1;
     a->p = 1;
     a->imm = extract32(insn, 0, 8);
     a->rn = extract32(insn, 16, 4);
+    a->u = 0;
+    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
+    a->w = 1;
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_22(DisasContext *ctx, arg_disas_vfp9 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->l = extract32(insn, 20, 1);
-    a->u = 0;
-    a->w = 1;
     a->p = 1;
     a->imm = extract32(insn, 0, 8);
     a->rn = extract32(insn, 16, 4);
+    a->u = 0;
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->w = 1;
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_23(DisasContext *ctx, arg_disas_vfp10 *a, uint32_t insn)
@@ -431,51 +431,51 @@ static void disas_vfp_extract_disas_vfp_Fmt_24(DisasContext *ctx, arg_disas_vfp1
 static void disas_vfp_extract_disas_vfp_Fmt_25(DisasContext *ctx, arg_disas_vfp11 *a, uint32_t insn)
 {
     a->z = extract32(insn, 16, 1);
-    a->e = extract32(insn, 7, 1);
-    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
     a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
+    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
+    a->e = extract32(insn, 7, 1);
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_26(DisasContext *ctx, arg_disas_vfp11 *a, uint32_t insn)
 {
     a->z = extract32(insn, 16, 1);
-    a->e = extract32(insn, 7, 1);
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
     a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
+    a->e = extract32(insn, 7, 1);
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_27(DisasContext *ctx, arg_disas_vfp12 *a, uint32_t insn)
 {
+    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
     a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->t = extract32(insn, 7, 1);
-    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_28(DisasContext *ctx, arg_disas_vfp12 *a, uint32_t insn)
 {
+    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
     a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->t = extract32(insn, 7, 1);
-    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_29(DisasContext *ctx, arg_disas_vfp12 *a, uint32_t insn)
 {
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
     a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->t = extract32(insn, 7, 1);
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_30(DisasContext *ctx, arg_disas_vfp13 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->s = extract32(insn, 7, 1);
+    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_31(DisasContext *ctx, arg_disas_vfp13 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->s = extract32(insn, 7, 1);
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
 }
 
@@ -495,91 +495,91 @@ static void disas_vfp_extract_disas_vfp_Fmt_33(DisasContext *ctx, arg_disas_vfp1
 
 static void disas_vfp_extract_disas_vfp_Fmt_34(DisasContext *ctx, arg_disas_vfp15 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->s = extract32(insn, 16, 1);
+    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->rz = extract32(insn, 7, 1);
     a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_35(DisasContext *ctx, arg_disas_vfp15 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->s = extract32(insn, 16, 1);
+    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->rz = extract32(insn, 7, 1);
     a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_6(DisasContext *ctx, arg_disas_vfp2 *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
     a->index = deposit32(extract32(insn, 5, 2), 2, 30, extract32(insn, 21, 1));
     a->size = 0;
-    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->u = extract32(insn, 23, 1);
+    a->rt = extract32(insn, 12, 4);
+    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_7(DisasContext *ctx, arg_disas_vfp2 *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
     a->index = deposit32(extract32(insn, 6, 1), 1, 31, extract32(insn, 21, 1));
     a->size = 1;
-    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->u = extract32(insn, 23, 1);
+    a->rt = extract32(insn, 12, 4);
+    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_8(DisasContext *ctx, arg_disas_vfp2 *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
     a->index = extract32(insn, 21, 1);
     a->size = 2;
-    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
     a->u = 0;
+    a->rt = extract32(insn, 12, 4);
+    a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
 }
 
 static void disas_vfp_extract_disas_vfp_Fmt_9(DisasContext *ctx, arg_disas_vfp3 *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->index = deposit32(extract32(insn, 5, 2), 2, 30, extract32(insn, 21, 1));
-    a->size = 0;
     a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
+    a->size = 0;
+    a->index = deposit32(extract32(insn, 5, 2), 2, 30, extract32(insn, 21, 1));
+    a->rt = extract32(insn, 12, 4);
 }
 
 static void disas_vfp_extract_vfp_dm_dd(DisasContext *ctx, arg_disas_vfp1 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
 }
 
 static void disas_vfp_extract_vfp_dm_ds(DisasContext *ctx, arg_disas_vfp1 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
+    a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
 }
 
 static void disas_vfp_extract_vfp_dm_sd(DisasContext *ctx, arg_disas_vfp1 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
+    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
 }
 
 static void disas_vfp_extract_vfp_dm_ss(DisasContext *ctx, arg_disas_vfp1 *a, uint32_t insn)
 {
-    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
+    a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
 }
 
 static void disas_vfp_extract_vfp_dnm_d(DisasContext *ctx, arg_disas_vfp0 *a, uint32_t insn)
 {
+    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
     a->vd = deposit32(extract32(insn, 12, 4), 4, 28, extract32(insn, 22, 1));
     a->vn = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 7, 1));
-    a->vm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 5, 1));
 }
 
 static void disas_vfp_extract_vfp_dnm_s(DisasContext *ctx, arg_disas_vfp0 *a, uint32_t insn)
 {
+    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
     a->vd = deposit32(extract32(insn, 22, 1), 1, 31, extract32(insn, 12, 4));
     a->vn = deposit32(extract32(insn, 7, 1), 1, 31, extract32(insn, 16, 4));
-    a->vm = deposit32(extract32(insn, 5, 1), 1, 31, extract32(insn, 0, 4));
 }
 
 bool disas_vfp(DisasContext *ctx, uint32_t insn)

@@ -691,39 +691,39 @@ static bool trans_SVC(DisasContext *ctx, arg_SVC *a);
 
 static void disas_a32_extract_S_xri_rot(DisasContext *ctx, arg_s_rri_rot *a, uint32_t insn)
 {
-    a->imm = extract32(insn, 0, 8);
     a->rn = extract32(insn, 16, 4);
-    a->rd = 0;
-    a->s = 1;
     a->rot = times_2(ctx, extract32(insn, 8, 4));
+    a->imm = extract32(insn, 0, 8);
+    a->s = 1;
+    a->rd = 0;
 }
 
 static void disas_a32_extract_S_xrr_shi(DisasContext *ctx, arg_s_rrr_shi *a, uint32_t insn)
 {
-    a->rn = extract32(insn, 16, 4);
-    a->shty = extract32(insn, 5, 2);
     a->shim = extract32(insn, 7, 5);
     a->rm = extract32(insn, 0, 4);
-    a->rd = 0;
+    a->shty = extract32(insn, 5, 2);
+    a->rn = extract32(insn, 16, 4);
     a->s = 1;
+    a->rd = 0;
 }
 
 static void disas_a32_extract_S_xrr_shr(DisasContext *ctx, arg_s_rrr_shr *a, uint32_t insn)
 {
-    a->rn = extract32(insn, 16, 4);
+    a->rm = extract32(insn, 0, 4);
     a->shty = extract32(insn, 5, 2);
+    a->rn = extract32(insn, 16, 4);
+    a->rs = extract32(insn, 8, 4);
     a->s = 1;
     a->rd = 0;
-    a->rm = extract32(insn, 0, 4);
-    a->rs = extract32(insn, 8, 4);
 }
 
 static void disas_a32_extract_bfx(DisasContext *ctx, arg_bfx *a, uint32_t insn)
 {
-    a->lsb = extract32(insn, 7, 5);
-    a->widthm1 = extract32(insn, 16, 5);
-    a->rd = extract32(insn, 12, 4);
     a->rn = extract32(insn, 0, 4);
+    a->widthm1 = extract32(insn, 16, 5);
+    a->lsb = extract32(insn, 7, 5);
+    a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_branch(DisasContext *ctx, arg_i *a, uint32_t insn)
@@ -737,29 +737,29 @@ static void disas_a32_extract_disas_a32_Fmt_16(DisasContext *ctx, arg_empty *a, 
 
 static void disas_a32_extract_disas_a32_Fmt_20(DisasContext *ctx, arg_mrs_bank *a, uint32_t insn)
 {
+    a->rd = extract32(insn, 12, 4);
     a->r = extract32(insn, 22, 1);
     a->sysm = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 8, 1));
-    a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_disas_a32_Fmt_21(DisasContext *ctx, arg_msr_bank *a, uint32_t insn)
 {
+    a->rn = extract32(insn, 0, 4);
     a->r = extract32(insn, 22, 1);
     a->sysm = deposit32(extract32(insn, 16, 4), 4, 28, extract32(insn, 8, 1));
-    a->rn = extract32(insn, 0, 4);
 }
 
 static void disas_a32_extract_disas_a32_Fmt_22(DisasContext *ctx, arg_mrs_reg *a, uint32_t insn)
 {
-    a->r = extract32(insn, 22, 1);
     a->rd = extract32(insn, 12, 4);
+    a->r = extract32(insn, 22, 1);
 }
 
 static void disas_a32_extract_disas_a32_Fmt_23(DisasContext *ctx, arg_msr_reg *a, uint32_t insn)
 {
-    a->r = extract32(insn, 22, 1);
-    a->mask = extract32(insn, 16, 4);
     a->rn = extract32(insn, 0, 4);
+    a->mask = extract32(insn, 16, 4);
+    a->r = extract32(insn, 22, 1);
 }
 
 static void disas_a32_extract_disas_a32_Fmt_24(DisasContext *ctx, arg_i *a, uint32_t insn)
@@ -769,28 +769,28 @@ static void disas_a32_extract_disas_a32_Fmt_24(DisasContext *ctx, arg_i *a, uint
 
 static void disas_a32_extract_disas_a32_Fmt_42(DisasContext *ctx, arg_bfi *a, uint32_t insn)
 {
+    a->rn = extract32(insn, 0, 4);
+    a->msb = extract32(insn, 16, 5);
     a->lsb = extract32(insn, 7, 5);
     a->rd = extract32(insn, 12, 4);
-    a->msb = extract32(insn, 16, 5);
-    a->rn = extract32(insn, 0, 4);
 }
 
 static void disas_a32_extract_disas_a32_Fmt_43(DisasContext *ctx, arg_pkh *a, uint32_t insn)
 {
-    a->imm = extract32(insn, 7, 5);
-    a->rn = extract32(insn, 16, 4);
-    a->tb = extract32(insn, 6, 1);
-    a->rd = extract32(insn, 12, 4);
     a->rm = extract32(insn, 0, 4);
+    a->tb = extract32(insn, 6, 1);
+    a->rn = extract32(insn, 16, 4);
+    a->imm = extract32(insn, 7, 5);
+    a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_disas_a32_Fmt_48(DisasContext *ctx, arg_ldst_block *a, uint32_t insn)
 {
     a->w = extract32(insn, 21, 1);
+    a->u = extract32(insn, 22, 1);
+    a->list = extract32(insn, 0, 16);
     a->rn = extract32(insn, 16, 4);
     a->b = extract32(insn, 24, 1);
-    a->list = extract32(insn, 0, 16);
-    a->u = extract32(insn, 22, 1);
     a->i = extract32(insn, 23, 1);
 }
 
@@ -806,203 +806,203 @@ static void disas_a32_extract_i16(DisasContext *ctx, arg_i *a, uint32_t insn)
 
 static void disas_a32_extract_ldrex(DisasContext *ctx, arg_ldrex *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->rt2 = 15;
     a->imm = 0;
+    a->rt = extract32(insn, 12, 4);
     a->rn = extract32(insn, 16, 4);
+    a->rt2 = 15;
 }
 
 static void disas_a32_extract_ldst_ri12_p0w1(DisasContext *ctx, arg_ldst_ri *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->imm = extract32(insn, 0, 12);
-    a->rn = extract32(insn, 16, 4);
     a->w = 0;
     a->u = extract32(insn, 23, 1);
+    a->rn = extract32(insn, 16, 4);
+    a->imm = extract32(insn, 0, 12);
+    a->rt = extract32(insn, 12, 4);
     a->p = 0;
 }
 
 static void disas_a32_extract_ldst_ri12_p1w(DisasContext *ctx, arg_ldst_ri *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->imm = extract32(insn, 0, 12);
-    a->rn = extract32(insn, 16, 4);
     a->w = extract32(insn, 21, 1);
     a->u = extract32(insn, 23, 1);
+    a->rn = extract32(insn, 16, 4);
+    a->imm = extract32(insn, 0, 12);
+    a->rt = extract32(insn, 12, 4);
     a->p = 1;
 }
 
 static void disas_a32_extract_ldst_ri12_pw0(DisasContext *ctx, arg_ldst_ri *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->imm = extract32(insn, 0, 12);
-    a->rn = extract32(insn, 16, 4);
     a->w = 0;
     a->u = extract32(insn, 23, 1);
+    a->rn = extract32(insn, 16, 4);
+    a->imm = extract32(insn, 0, 12);
+    a->rt = extract32(insn, 12, 4);
     a->p = 0;
 }
 
 static void disas_a32_extract_ldst_ri8_p0w1(DisasContext *ctx, arg_ldst_ri *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->imm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 8, 4));
-    a->rn = extract32(insn, 16, 4);
     a->w = 0;
     a->u = extract32(insn, 23, 1);
+    a->rn = extract32(insn, 16, 4);
+    a->imm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 8, 4));
+    a->rt = extract32(insn, 12, 4);
     a->p = 0;
 }
 
 static void disas_a32_extract_ldst_ri8_p1w(DisasContext *ctx, arg_ldst_ri *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->imm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 8, 4));
-    a->rn = extract32(insn, 16, 4);
     a->w = extract32(insn, 21, 1);
     a->u = extract32(insn, 23, 1);
+    a->rn = extract32(insn, 16, 4);
+    a->imm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 8, 4));
+    a->rt = extract32(insn, 12, 4);
     a->p = 1;
 }
 
 static void disas_a32_extract_ldst_ri8_pw0(DisasContext *ctx, arg_ldst_ri *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->imm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 8, 4));
-    a->rn = extract32(insn, 16, 4);
     a->w = 0;
     a->u = extract32(insn, 23, 1);
+    a->rn = extract32(insn, 16, 4);
+    a->imm = deposit32(extract32(insn, 0, 4), 4, 28, extract32(insn, 8, 4));
+    a->rt = extract32(insn, 12, 4);
     a->p = 0;
 }
 
 static void disas_a32_extract_ldst_rr_p0w1(DisasContext *ctx, arg_ldst_rr *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->shtype = 0;
-    a->rn = extract32(insn, 16, 4);
     a->w = 0;
-    a->shimm = 0;
     a->u = extract32(insn, 23, 1);
     a->rm = extract32(insn, 0, 4);
+    a->rn = extract32(insn, 16, 4);
+    a->shimm = 0;
+    a->rt = extract32(insn, 12, 4);
     a->p = 0;
+    a->shtype = 0;
 }
 
 static void disas_a32_extract_ldst_rr_p1w(DisasContext *ctx, arg_ldst_rr *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->shtype = 0;
-    a->rn = extract32(insn, 16, 4);
     a->w = extract32(insn, 21, 1);
-    a->shimm = 0;
     a->u = extract32(insn, 23, 1);
     a->rm = extract32(insn, 0, 4);
+    a->rn = extract32(insn, 16, 4);
+    a->shimm = 0;
+    a->rt = extract32(insn, 12, 4);
     a->p = 1;
+    a->shtype = 0;
 }
 
 static void disas_a32_extract_ldst_rr_pw0(DisasContext *ctx, arg_ldst_rr *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->shtype = 0;
-    a->rn = extract32(insn, 16, 4);
     a->w = 0;
-    a->shimm = 0;
     a->u = extract32(insn, 23, 1);
     a->rm = extract32(insn, 0, 4);
+    a->rn = extract32(insn, 16, 4);
+    a->shimm = 0;
+    a->rt = extract32(insn, 12, 4);
     a->p = 0;
+    a->shtype = 0;
 }
 
 static void disas_a32_extract_ldst_rs_p0w1(DisasContext *ctx, arg_ldst_rr *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->shtype = extract32(insn, 5, 2);
-    a->shimm = extract32(insn, 7, 5);
-    a->rn = extract32(insn, 16, 4);
     a->w = 0;
     a->u = extract32(insn, 23, 1);
     a->rm = extract32(insn, 0, 4);
+    a->rn = extract32(insn, 16, 4);
+    a->shimm = extract32(insn, 7, 5);
+    a->rt = extract32(insn, 12, 4);
     a->p = 0;
+    a->shtype = extract32(insn, 5, 2);
 }
 
 static void disas_a32_extract_ldst_rs_p1w(DisasContext *ctx, arg_ldst_rr *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->shtype = extract32(insn, 5, 2);
-    a->shimm = extract32(insn, 7, 5);
-    a->rn = extract32(insn, 16, 4);
     a->w = extract32(insn, 21, 1);
     a->u = extract32(insn, 23, 1);
     a->rm = extract32(insn, 0, 4);
+    a->rn = extract32(insn, 16, 4);
+    a->shimm = extract32(insn, 7, 5);
+    a->rt = extract32(insn, 12, 4);
     a->p = 1;
+    a->shtype = extract32(insn, 5, 2);
 }
 
 static void disas_a32_extract_ldst_rs_pw0(DisasContext *ctx, arg_ldst_rr *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->shtype = extract32(insn, 5, 2);
-    a->shimm = extract32(insn, 7, 5);
-    a->rn = extract32(insn, 16, 4);
     a->w = 0;
     a->u = extract32(insn, 23, 1);
     a->rm = extract32(insn, 0, 4);
+    a->rn = extract32(insn, 16, 4);
+    a->shimm = extract32(insn, 7, 5);
+    a->rt = extract32(insn, 12, 4);
     a->p = 0;
+    a->shtype = extract32(insn, 5, 2);
 }
 
 static void disas_a32_extract_mcr(DisasContext *ctx, arg_mcr *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 12, 4);
-    a->crn = extract32(insn, 16, 4);
-    a->opc1 = extract32(insn, 21, 3);
-    a->cp = extract32(insn, 8, 4);
     a->opc2 = extract32(insn, 5, 3);
+    a->crn = extract32(insn, 16, 4);
+    a->rt = extract32(insn, 12, 4);
+    a->cp = extract32(insn, 8, 4);
     a->crm = extract32(insn, 0, 4);
+    a->opc1 = extract32(insn, 21, 3);
 }
 
 static void disas_a32_extract_mcrr(DisasContext *ctx, arg_mcrr *a, uint32_t insn)
 {
     a->rt2 = extract32(insn, 16, 4);
     a->rt = extract32(insn, 12, 4);
-    a->opc1 = extract32(insn, 4, 4);
     a->cp = extract32(insn, 8, 4);
     a->crm = extract32(insn, 0, 4);
+    a->opc1 = extract32(insn, 4, 4);
 }
 
 static void disas_a32_extract_mov16(DisasContext *ctx, arg_ri *a, uint32_t insn)
 {
-    a->rd = extract32(insn, 12, 4);
     a->imm = deposit32(extract32(insn, 0, 12), 12, 20, extract32(insn, 16, 4));
+    a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_msr_i(DisasContext *ctx, arg_msr_i *a, uint32_t insn)
 {
-    a->imm = extract32(insn, 0, 8);
     a->rot = extract32(insn, 8, 4);
+    a->imm = extract32(insn, 0, 8);
     a->mask = extract32(insn, 16, 4);
 }
 
 static void disas_a32_extract_rd0mn(DisasContext *ctx, arg_rrrr *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 8, 4);
+    a->rn = extract32(insn, 0, 4);
     a->ra = 0;
     a->rd = extract32(insn, 16, 4);
-    a->rn = extract32(insn, 0, 4);
+    a->rm = extract32(insn, 8, 4);
 }
 
 static void disas_a32_extract_rdamn(DisasContext *ctx, arg_rrrr *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 8, 4);
+    a->rn = extract32(insn, 0, 4);
     a->ra = extract32(insn, 12, 4);
     a->rd = extract32(insn, 16, 4);
-    a->rn = extract32(insn, 0, 4);
+    a->rm = extract32(insn, 8, 4);
 }
 
 static void disas_a32_extract_rdm(DisasContext *ctx, arg_rr *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 0, 4);
     a->rd = extract32(insn, 12, 4);
+    a->rm = extract32(insn, 0, 4);
 }
 
 static void disas_a32_extract_rdmn(DisasContext *ctx, arg_rrr *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 8, 4);
-    a->rd = extract32(insn, 16, 4);
     a->rn = extract32(insn, 0, 4);
+    a->rd = extract32(insn, 16, 4);
+    a->rm = extract32(insn, 8, 4);
 }
 
 static void disas_a32_extract_rm(DisasContext *ctx, arg_r *a, uint32_t insn)
@@ -1012,135 +1012,135 @@ static void disas_a32_extract_rm(DisasContext *ctx, arg_r *a, uint32_t insn)
 
 static void disas_a32_extract_rndm(DisasContext *ctx, arg_rrr *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 0, 4);
     a->rd = extract32(insn, 12, 4);
     a->rn = extract32(insn, 16, 4);
+    a->rm = extract32(insn, 0, 4);
 }
 
 static void disas_a32_extract_rrr_rot(DisasContext *ctx, arg_rrr_rot *a, uint32_t insn)
 {
-    a->rm = extract32(insn, 0, 4);
     a->rot = extract32(insn, 10, 2);
     a->rd = extract32(insn, 12, 4);
     a->rn = extract32(insn, 16, 4);
+    a->rm = extract32(insn, 0, 4);
 }
 
 static void disas_a32_extract_s_rd0mn(DisasContext *ctx, arg_s_rrrr *a, uint32_t insn)
 {
-    a->ra = 0;
-    a->rn = extract32(insn, 0, 4);
     a->rm = extract32(insn, 8, 4);
-    a->rd = extract32(insn, 16, 4);
+    a->rn = extract32(insn, 0, 4);
+    a->ra = 0;
     a->s = extract32(insn, 20, 1);
+    a->rd = extract32(insn, 16, 4);
 }
 
 static void disas_a32_extract_s_rdamn(DisasContext *ctx, arg_s_rrrr *a, uint32_t insn)
 {
-    a->ra = extract32(insn, 12, 4);
-    a->rn = extract32(insn, 0, 4);
     a->rm = extract32(insn, 8, 4);
-    a->rd = extract32(insn, 16, 4);
+    a->rn = extract32(insn, 0, 4);
+    a->ra = extract32(insn, 12, 4);
     a->s = extract32(insn, 20, 1);
+    a->rd = extract32(insn, 16, 4);
 }
 
 static void disas_a32_extract_s_rri_rot(DisasContext *ctx, arg_s_rri_rot *a, uint32_t insn)
 {
-    a->imm = extract32(insn, 0, 8);
     a->rn = extract32(insn, 16, 4);
-    a->rd = extract32(insn, 12, 4);
-    a->s = extract32(insn, 20, 1);
     a->rot = times_2(ctx, extract32(insn, 8, 4));
+    a->imm = extract32(insn, 0, 8);
+    a->s = extract32(insn, 20, 1);
+    a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_s_rrr_shi(DisasContext *ctx, arg_s_rrr_shi *a, uint32_t insn)
 {
-    a->rn = extract32(insn, 16, 4);
-    a->shty = extract32(insn, 5, 2);
     a->shim = extract32(insn, 7, 5);
     a->rm = extract32(insn, 0, 4);
-    a->rd = extract32(insn, 12, 4);
+    a->shty = extract32(insn, 5, 2);
+    a->rn = extract32(insn, 16, 4);
     a->s = extract32(insn, 20, 1);
+    a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_s_rrr_shr(DisasContext *ctx, arg_s_rrr_shr *a, uint32_t insn)
 {
-    a->rn = extract32(insn, 16, 4);
-    a->shty = extract32(insn, 5, 2);
     a->rm = extract32(insn, 0, 4);
-    a->rd = extract32(insn, 12, 4);
-    a->s = extract32(insn, 20, 1);
+    a->shty = extract32(insn, 5, 2);
+    a->rn = extract32(insn, 16, 4);
     a->rs = extract32(insn, 8, 4);
+    a->s = extract32(insn, 20, 1);
+    a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_s_rxi_rot(DisasContext *ctx, arg_s_rri_rot *a, uint32_t insn)
 {
-    a->imm = extract32(insn, 0, 8);
     a->rn = 0;
-    a->rd = extract32(insn, 12, 4);
-    a->s = extract32(insn, 20, 1);
     a->rot = times_2(ctx, extract32(insn, 8, 4));
+    a->imm = extract32(insn, 0, 8);
+    a->s = extract32(insn, 20, 1);
+    a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_s_rxr_shi(DisasContext *ctx, arg_s_rrr_shi *a, uint32_t insn)
 {
-    a->rn = 0;
-    a->shty = extract32(insn, 5, 2);
     a->shim = extract32(insn, 7, 5);
     a->rm = extract32(insn, 0, 4);
-    a->rd = extract32(insn, 12, 4);
+    a->shty = extract32(insn, 5, 2);
+    a->rn = 0;
     a->s = extract32(insn, 20, 1);
+    a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_s_rxr_shr(DisasContext *ctx, arg_s_rrr_shr *a, uint32_t insn)
 {
-    a->rn = 0;
+    a->rm = extract32(insn, 0, 4);
     a->shty = extract32(insn, 5, 2);
+    a->rn = 0;
+    a->rs = extract32(insn, 8, 4);
     a->s = extract32(insn, 20, 1);
     a->rd = extract32(insn, 12, 4);
-    a->rm = extract32(insn, 0, 4);
-    a->rs = extract32(insn, 8, 4);
 }
 
 static void disas_a32_extract_sat(DisasContext *ctx, arg_sat *a, uint32_t insn)
 {
-    a->imm = extract32(insn, 7, 5);
+    a->satimm = extract32(insn, 16, 5);
     a->rn = extract32(insn, 0, 4);
+    a->imm = extract32(insn, 7, 5);
     a->sh = extract32(insn, 6, 1);
     a->rd = extract32(insn, 12, 4);
-    a->satimm = extract32(insn, 16, 5);
 }
 
 static void disas_a32_extract_sat16(DisasContext *ctx, arg_sat *a, uint32_t insn)
 {
-    a->imm = 0;
+    a->satimm = extract32(insn, 16, 4);
     a->rn = extract32(insn, 0, 4);
+    a->imm = 0;
     a->sh = 0;
     a->rd = extract32(insn, 12, 4);
-    a->satimm = extract32(insn, 16, 4);
 }
 
 static void disas_a32_extract_stl(DisasContext *ctx, arg_ldrex *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 0, 4);
-    a->rt2 = 15;
     a->imm = 0;
+    a->rt = extract32(insn, 0, 4);
     a->rn = extract32(insn, 16, 4);
+    a->rt2 = 15;
 }
 
 static void disas_a32_extract_strex(DisasContext *ctx, arg_strex *a, uint32_t insn)
 {
-    a->rt = extract32(insn, 0, 4);
+    a->rn = extract32(insn, 16, 4);
     a->rt2 = 15;
     a->imm = 0;
-    a->rn = extract32(insn, 16, 4);
+    a->rt = extract32(insn, 0, 4);
     a->rd = extract32(insn, 12, 4);
 }
 
 static void disas_a32_extract_swp(DisasContext *ctx, arg_disas_a3228 *a, uint32_t insn)
 {
     a->rt = extract32(insn, 12, 4);
-    a->rt2 = extract32(insn, 0, 4);
     a->rn = extract32(insn, 16, 4);
+    a->rt2 = extract32(insn, 0, 4);
 }
 
 static bool disas_a32(DisasContext *ctx, uint32_t insn)

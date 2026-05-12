@@ -1,3 +1,4 @@
+`timescale 1ns/1ps
 // Передатчик UART: 16x оверсэмплинг, 5–8 бит, чётность, 1/2 стоп.
 module uart_tx (
   input  wire        clk,

@@ -28,6 +28,8 @@ module avalon_apb_uart_16550 #(
   input  wire [3:0]          avs_byteenable,
   output wire [31:0]         avs_readdata,
   output wire                avs_waitrequest,
+  /* Дублирует APB pslverr при обращении вне 0x00..0x2C (смещения слов 0..11). */
+  output wire                uart_pslverr,
 
   output wire                irq,
   output wire                uart_txd,
@@ -60,4 +62,5 @@ module avalon_apb_uart_16550 #(
 
   assign avs_readdata    = apb_prdata;
   assign avs_waitrequest = 1'b0;
+  assign uart_pslverr    = apb_pslverr;
 endmodule

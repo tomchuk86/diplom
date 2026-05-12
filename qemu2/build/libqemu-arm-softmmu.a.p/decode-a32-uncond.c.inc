@@ -68,25 +68,25 @@ static void disas_a32_uncond_extract_disas_a32_uncond_Fmt_0(DisasContext *ctx, a
 static void disas_a32_uncond_extract_disas_a32_uncond_Fmt_1(DisasContext *ctx, arg_rfe *a, uint32_t insn)
 {
     a->rn = extract32(insn, 16, 4);
-    a->w = extract32(insn, 21, 1);
     a->pu = extract32(insn, 23, 2);
+    a->w = extract32(insn, 21, 1);
 }
 
 static void disas_a32_uncond_extract_disas_a32_uncond_Fmt_2(DisasContext *ctx, arg_srs *a, uint32_t insn)
 {
-    a->w = extract32(insn, 21, 1);
-    a->pu = extract32(insn, 23, 2);
     a->mode = extract32(insn, 0, 5);
+    a->pu = extract32(insn, 23, 2);
+    a->w = extract32(insn, 21, 1);
 }
 
 static void disas_a32_uncond_extract_disas_a32_uncond_Fmt_3(DisasContext *ctx, arg_cps *a, uint32_t insn)
 {
-    a->A = extract32(insn, 8, 1);
-    a->M = extract32(insn, 17, 1);
-    a->mode = extract32(insn, 0, 5);
-    a->I = extract32(insn, 7, 1);
     a->F = extract32(insn, 6, 1);
     a->imod = extract32(insn, 18, 2);
+    a->I = extract32(insn, 7, 1);
+    a->mode = extract32(insn, 0, 5);
+    a->M = extract32(insn, 17, 1);
+    a->A = extract32(insn, 8, 1);
 }
 
 static void disas_a32_uncond_extract_disas_a32_uncond_Fmt_4(DisasContext *ctx, arg_empty *a, uint32_t insn)
