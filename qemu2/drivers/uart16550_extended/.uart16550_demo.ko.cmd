@@ -1,1 +1,0 @@
-savedcmd_uart16550_demo.ko := /home/vboxuser/buildroot/output/host/bin/arm-none-linux-gnueabihf-ld -r -EL -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T /home/vboxuser/buildroot/output/build/linux-6.18.7/scripts/module.lds -o uart16550_demo.ko uart16550_demo.o uart16550_demo.mod.o .module-common.o

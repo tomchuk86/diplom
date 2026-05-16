@@ -1,0 +1,13 @@
+*.o
+*.ko
+*.mod.c
+*.mod
+*.cmd
+.*.cmd
+..*.cmd
+.module-common.o
+..module-common.o.cmd
+.tmp_versions/
+Module.symvers
+modules.order
+test_uart16550_demo

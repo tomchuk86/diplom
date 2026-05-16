@@ -456,6 +456,32 @@ static int uart_self_test_locked(struct uart_selftest *t)
 
     uart_reset_fifo_hw();
 
+    /*
+     * In loopback each THR byte appears immediately on RBR/FIFO depth 8:
+     * batching all writes before reads overflows RX and breaks following tests.
+     */
+    if (dev.loopback_enabled) {
+        for (i = 0; i < len; i++) {
+            ret = uart_put_byte_locked(t->pattern[i]);
+            if (ret) {
+                t->errors++;
+                return ret;
+            }
+            t->tx_ok++;
+            ret = uart_get_byte_locked(&rx, false);
+            if (ret < 0) {
+                t->errors++;
+                return ret;
+            }
+            t->actual_rx++;
+            if (rx == (u8)t->pattern[i])
+                t->rx_ok++;
+            else
+                t->errors++;
+        }
+        return t->errors ? -EIO : 0;
+    }
+
     for (i = 0; i < len; i++) {
         ret = uart_put_byte_locked(t->pattern[i]);
         if (ret) {
@@ -465,24 +491,7 @@ static int uart_self_test_locked(struct uart_selftest *t)
         t->tx_ok++;
     }
 
-    if (!dev.loopback_enabled)
-        return 0;
-
-    for (i = 0; i < len; i++) {
-        ret = uart_get_byte_locked(&rx, false);
-        if (ret < 0) {
-            t->errors++;
-            return ret;
-        }
-
-        t->actual_rx++;
-        if (rx == (u8)t->pattern[i])
-            t->rx_ok++;
-        else
-            t->errors++;
-    }
-
-    return t->errors ? -EIO : 0;
+    return 0;
 }
 
 /* ------------------------------------------------------------------------- */
