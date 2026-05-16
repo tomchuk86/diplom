@@ -12,9 +12,10 @@
 #include <linux/types.h>
 #include <linux/string.h>
 #include <asm/processor.h>
+#include <linux/compiler.h>
 
 #define DRV_NAME "uart16550_demo"
-#define DRV_VERSION "2.1-loopback-selftest-fix"
+#define DRV_VERSION "2.2-stats-reset-wmb"
 
 /* ------------------------------------------------------------------------- */
 /* Module parameters                                                         */
@@ -310,6 +311,8 @@ static void uart_reset_stats_hw(void)
     uart_write32(UART_RX_COUNT, 0);
     uart_write32(UART_ERR_COUNT, 0);
     uart_write32(UART_IRQ_COUNT, 0);
+    /* Visible to subsequent readl(GET_STATS) on interconnects that post MMIO writes. */
+    wmb();
     uart_dbg("hardware statistic counters reset\n");
 }
 
