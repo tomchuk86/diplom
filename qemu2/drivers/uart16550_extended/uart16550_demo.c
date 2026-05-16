@@ -236,7 +236,7 @@ static inline void uart_write32(u32 off, u32 v)
 static int uart_wait_lsr(u8 mask, bool set, unsigned int timeout_us)
 {
     unsigned int i;
-    u8 lsr;
+    u8 lsr = 0;
 
     for (i = 0; i < timeout_us; i++) {
         lsr = uart_read8(UART_LSR);
@@ -380,9 +380,28 @@ static void uart_get_config_sw(struct uart_config *cfg)
     cfg->sw_timeouts = dev.sw.timeouts;
 }
 
+/*
+ * In MCR loopback, spurious framing on uart_rxd (e.g. USB-TTL TX on GPIO) may
+ * fill RX FIFO briefly. Discard any queued RX bytes before each THR write; the
+ * echo for this byte appears only afterward.
+ */
+static void uart_flush_rx_fifo_locked(void)
+{
+    unsigned int cnt = 0;
+
+    if (!dev.loopback_enabled)
+        return;
+    while ((uart_read8(UART_LSR) & UART_LSR_DR) && cnt++ < 64)
+        uart_read8(UART_RBR);
+}
+
 static int uart_put_byte_locked(u8 byte)
 {
-    int ret = uart_wait_tx_ready();
+    int ret;
+
+    uart_flush_rx_fifo_locked();
+
+    ret = uart_wait_tx_ready();
 
     if (ret)
         return ret;

@@ -239,8 +239,12 @@ static int write_bytes_consume_loopback(struct test_ctx *ctx, const char *buf, s
             return -1;
         if (read_with_retry(ctx->fd, &rx, 800) != 1)
             return -1;
-        if (rx != buf[i])
+        if ((unsigned char)rx != (unsigned char)buf[i]) {
+            fprintf(stderr,
+                    "loopback mismatch at offset %zu: sent 0x%02x read 0x%02x\n",
+                    i, (unsigned char)buf[i], (unsigned char)rx);
             return -2;
+        }
     }
     return 0;
 }
@@ -341,7 +345,9 @@ static int test_loopback_rx(struct test_ctx *ctx)
         return TEST_FAIL;
     }
 
-    if (rx != tx) {
+    if ((unsigned char)rx != (unsigned char)tx) {
+        fprintf(stderr, "loopback_rx: sent 0x%02x read 0x%02x\n",
+                (unsigned char)tx, (unsigned char)rx);
         fail(ctx, name, "received byte differs from transmitted byte");
         return TEST_FAIL;
     }
