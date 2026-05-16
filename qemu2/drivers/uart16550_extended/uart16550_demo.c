@@ -14,7 +14,7 @@
 #include <asm/processor.h>
 
 #define DRV_NAME "uart16550_demo"
-#define DRV_VERSION "2.0-diploma"
+#define DRV_VERSION "2.1-loopback-selftest-fix"
 
 /* ------------------------------------------------------------------------- */
 /* Module parameters                                                         */
